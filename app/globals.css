@@ -1,26 +1,138 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f6f0e2;
+  --paper-deep: #efe6d2;
+  --ink: #0e1d31;
+  --ink-soft: #3c4a5e;
+  --brass: #a8842c;
+  --brass-bright: #d4a437;
+  --line: rgba(14, 29, 49, 0.28);
+  --receipt-paper: #fdfaf2;
+  --receipt-ink: #1a1a18;
+}
+
+[data-theme="soir"] {
+  --paper: #0a1422;
+  --paper-deep: #0e1a2c;
+  --ink: #f1e8d4;
+  --ink-soft: #b3ac97;
+  --brass: #d4a437;
+  --brass-bright: #e6bd55;
+  --line: rgba(241, 232, 212, 0.3);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-brass: var(--brass);
+  --color-brass-bright: var(--brass-bright);
+  --color-line: var(--line);
+  --color-receipt-paper: var(--receipt-paper);
+  --color-receipt-ink: var(--receipt-ink);
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-garamond);
+  --font-mono: var(--font-plex-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-garamond), serif;
+  transition:
+    background-color 0.6s ease,
+    color 0.6s ease;
+}
+
+/* Grain de papier, par-dessus tout, non interactif */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Petites capitales espacées, signature des cartes */
+.smallcaps {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.32em;
+}
+
+/* Points de conduite entre le plat et son prix */
+.leader {
+  flex: 1 1 auto;
+  min-width: 1.5rem;
+  margin: 0 0.5em;
+  border-bottom: 2px dotted var(--line);
+  transform: translateY(-0.32em);
+}
+
+/* Double filet horizontal */
+.filet {
+  height: 5px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Bord déchiré du ticket de caisse */
+.tooth-bottom {
+  --tooth: 12px;
+  mask-image: linear-gradient(black, black),
+    radial-gradient(
+      circle at 50% 100%,
+      transparent calc(var(--tooth) * 0.55),
+      black calc(var(--tooth) * 0.55)
+    );
+  mask-size:
+    100% calc(100% - var(--tooth)),
+    var(--tooth) var(--tooth);
+  mask-position:
+    top,
+    bottom;
+  mask-repeat: no-repeat, repeat-x;
+}
+
+/* Code-barres en pur CSS */
+.barcode {
+  height: 44px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--receipt-ink) 0 2px,
+    transparent 2px 5px,
+    var(--receipt-ink) 5px 6px,
+    transparent 6px 11px,
+    var(--receipt-ink) 11px 14px,
+    transparent 14px 17px
+  );
+}
+
+::selection {
+  background: var(--brass-bright);
+  color: #0a1422;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass-bright);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
