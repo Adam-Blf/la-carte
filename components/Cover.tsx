@@ -1,0 +1,119 @@
+"use client";
+
+import { motion } from "framer-motion";
+
+const reveal = {
+  hidden: { opacity: 0, y: 24 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: 0.25 + i * 0.18, duration: 0.9, ease: [0.2, 0.8, 0.2, 1] as const },
+  }),
+};
+
+export default function Cover({ onOpen }: { onOpen: () => void }) {
+  return (
+    <motion.section
+      className="fixed inset-0 z-40 flex items-center justify-center bg-paper p-4 sm:p-8"
+      exit={{ y: "-100%", transition: { duration: 1.1, ease: [0.7, 0, 0.2, 1] } }}
+      aria-label="Couverture de la carte"
+    >
+      <div className="relative flex h-full w-full items-center justify-center border border-line">
+        <div className="pointer-events-none absolute inset-2 border border-line" />
+
+        {/* Ornements d'angle */}
+        {["top-4 left-4", "top-4 right-4", "bottom-4 left-4", "bottom-4 right-4"].map(
+          (pos) => (
+            <span
+              key={pos}
+              aria-hidden
+              className={`absolute ${pos} font-display text-sm text-brass`}
+            >
+              ✦
+            </span>
+          ),
+        )}
+
+        <div className="flex max-w-2xl flex-col items-center px-6 text-center">
+          <motion.p
+            className="smallcaps text-sm text-ink-soft"
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={0}
+          >
+            Maison A. · depuis toujours
+          </motion.p>
+
+          <motion.h1
+            className="mt-6 font-display text-[clamp(3.5rem,14vw,9rem)] leading-none font-light italic"
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={1}
+          >
+            La Carte
+          </motion.h1>
+
+          <motion.p
+            className="smallcaps mt-4 text-base text-brass"
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={2}
+          >
+            des rendez-vous
+          </motion.p>
+
+          <motion.div
+            className="mt-8 flex w-40 items-center gap-3"
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={3}
+          >
+            <span className="filet flex-1" />
+            <span aria-hidden className="text-brass">
+              ❦
+            </span>
+            <span className="filet flex-1" />
+          </motion.div>
+
+          <motion.p
+            className="mt-8 max-w-md text-lg italic text-ink-soft"
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={4}
+          >
+            Une invitation à composer la soirée idéale · mise en bouche, plat,
+            dessert. La maison s'occupe du reste.
+          </motion.p>
+
+          <motion.button
+            type="button"
+            onClick={onOpen}
+            className="smallcaps mt-12 cursor-pointer border border-brass px-10 py-4 text-base text-ink transition-colors duration-300 hover:bg-brass hover:text-paper"
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={5}
+            whileTap={{ scale: 0.97 }}
+          >
+            Consulter la carte
+          </motion.button>
+
+          <motion.p
+            className="smallcaps mt-10 text-xs text-ink-soft"
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={6}
+          >
+            Table pour deux · service unique
+          </motion.p>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
