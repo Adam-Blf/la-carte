@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# La Carte · Maison A.
 
-## Getting Started
+<!-- adam-badges:start -->
+[![commits](https://img.shields.io/github/commit-activity/t/Adam-Blf/la-carte?color=001329&label=commits&style=flat-square)](https://github.com/Adam-Blf/la-carte/commits)
+[![visites](https://hits.sh/github.com/Adam-Blf/la-carte.svg?style=flat-square&label=visites&color=001329)](https://hits.sh/github.com/Adam-Blf/la-carte/)
+[![last commit](https://img.shields.io/github/last-commit/Adam-Blf/la-carte?color=D4A437&style=flat-square&label=dernier%20push)](https://github.com/Adam-Blf/la-carte/commits)
+[![top language](https://img.shields.io/github/languages/top/Adam-Blf/la-carte?style=flat-square)](https://github.com/Adam-Blf/la-carte)
+[![version](https://img.shields.io/badge/version-0.1.0-D4A437?style=flat-square)](package.json)
+<!-- adam-badges:end -->
 
-First, run the development server:
+Une invitation à un rendez-vous présentée comme la carte d'un restaurant
+gastronomique. L'invitée compose son menu (mise en bouche, plat, dessert,
+accords), coche ses disponibilités dans le carnet de réservations, puis
+demande l'addition · un ticket de caisse thermique s'imprime à l'écran,
+tamponné « Réservation confirmée », total 0,00 € réglé d'avance par la maison.
+
+## Features
+
+- [x] Couverture de carte animée (révélation séquencée, double filet, ornements)
+- [x] 24 activités réparties en 4 services · Mises en bouche, Plats, Desserts, Accords & suppléments
+- [x] Prix fantaisistes avec points de conduite typographiques
+- [x] Sélection interactive multi-services (au moins un plat requis)
+- [x] Carnet de réservations · grille 7 jours × 3 services, animations en cascade
+- [x] Thèmes Service de jour / Service du soir (papier crème ↔ encre navy), persistés
+- [x] Reçu thermique animé · avance papier saccadée, bord déchiré, code-barres CSS, tampon laiton
+- [x] Notification email automatique au chef à chaque addition (route API + FormSubmit)
+- [x] Envoi WhatsApp du récapitulatif + copie presse-papiers
+- [x] Accessibilité · aria-pressed, focus visible, prefers-reduced-motion
+
+## Stack
+
+| Couche | Choix |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| UI | React 19 · Tailwind CSS 4 |
+| Animations | framer-motion 12 |
+| Typographie | Fraunces · EB Garamond · IBM Plex Mono |
+| Email | FormSubmit (via route handler, adresse jamais exposée au client) |
+| Déploiement cible | Vercel |
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # build de production
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aucune variable d'environnement requise. L'adresse de notification vit dans
+`app/api/reservation/route.ts` côté serveur. Au premier envoi, FormSubmit
+expédie un email d'activation à cette adresse · cliquer « Activate » une fois.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+  layout.tsx              fonts, thème, métadonnées
+  page.tsx                orchestration · couverture → carte → réservation → addition
+  api/reservation/        notification email du chef
+components/
+  Cover.tsx               couverture de la carte
+  Carte.tsx               sections du menu + items sélectionnables
+  Reservation.tsx         grille de disponibilités + prénom
+  CommandBar.tsx          barre de commande flottante
+  Receipt.tsx             ticket thermique animé + envoi
+  ThemeToggle.tsx         bascule jour / soir
+data/menu.ts              contenu de la carte (activités, prix, services)
+lib/version.ts            singleton de version (source · package.json)
+```
 
-## Learn More
+## Licence
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Projet personnel · tous droits réservés.
