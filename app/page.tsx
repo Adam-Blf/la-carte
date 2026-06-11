@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Cover from "@/components/Cover";
 import Carte from "@/components/Carte";
@@ -9,9 +9,11 @@ import CommandBar from "@/components/CommandBar";
 import Receipt from "@/components/Receipt";
 import ThemeToggle from "@/components/ThemeToggle";
 import MusicToggle from "@/components/MusicToggle";
+import InviteMaker from "@/components/InviteMaker";
 import { COURSES } from "@/data/menu";
 import { VERSION } from "@/lib/version";
 import { musicPrefOff, startMusic } from "@/lib/music";
+import { hostInitial, parseHostFromLocation, type Host } from "@/lib/host";
 
 const PLAT_IDS = new Set(
   COURSES.find((c) => c.id === "plats")?.items.map((i) => i.id) ?? [],
@@ -23,6 +25,12 @@ export default function Home() {
   const [slots, setSlots] = useState<Set<SlotId>>(new Set());
   const [guestName, setGuestName] = useState("");
   const [billOpen, setBillOpen] = useState(false);
+  const [host, setHost] = useState<Host | null>(null);
+
+  // L'hôte voyage dans l'URL (?h=…) · lu après montage, pas de SSR mismatch
+  useEffect(() => {
+    setHost(parseHostFromLocation());
+  }, []);
 
   const toggleItem = useCallback((id: string) => {
     setSelections((prev) => {
@@ -47,6 +55,8 @@ export default function Home() {
     [selections],
   );
 
+  const maison = host ? `Maison ${hostInitial(host)}.` : "Maison A.";
+
   return (
     <>
       <ThemeToggle />
@@ -56,6 +66,7 @@ export default function Home() {
         {!opened && (
           <Cover
             key="cover"
+            maison={maison}
             onOpen={() => {
               setOpened(true);
               if (!musicPrefOff()) startMusic();
@@ -78,6 +89,7 @@ export default function Home() {
             guestName={guestName}
             onGuestName={setGuestName}
           />
+          <InviteMaker />
 
           <footer className="mt-24 px-5 text-center">
             <div className="mx-auto flex w-32 items-center gap-3">
@@ -88,7 +100,7 @@ export default function Home() {
               <span className="filet flex-1" />
             </div>
             <p className="smallcaps mt-6 text-xs text-ink-soft">
-              Maison A. · service en salle assuré par le chef lui-même
+              {maison} · service en salle assuré par le chef lui-même
             </p>
             <p className="smallcaps mt-2 text-xs text-ink-soft/60">
               carte v{VERSION} · paris
@@ -113,6 +125,7 @@ export default function Home() {
             selections={selections}
             slots={slots}
             guestName={guestName}
+            host={host}
             onClose={() => setBillOpen(false)}
           />
         )}

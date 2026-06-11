@@ -26,8 +26,14 @@ export default function CommandBar({
       onRequestBill();
       return;
     }
-    const target = !hasPlat ? "plats" : "reservation";
-    document.getElementById(target)?.scrollIntoView({ behavior: "smooth" });
+    const target = document.getElementById(!hasPlat ? "plats" : "reservation");
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth" });
+    target.classList.remove("flash-target");
+    // reflow pour relancer l'animation si on reclique
+    void target.offsetWidth;
+    target.classList.add("flash-target");
+    setTimeout(() => target.classList.remove("flash-target"), 2000);
   }
 
   return (

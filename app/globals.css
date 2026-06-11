@@ -127,6 +127,21 @@ body {
   color: #0a1422;
 }
 
+/* Mise en évidence d'une section quand la barre de commande y guide */
+@keyframes flash-target {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  25%,
+  60% {
+    background-color: var(--paper-deep);
+  }
+}
+.flash-target {
+  animation: flash-target 1.8s ease;
+}
+
 :focus-visible {
   outline: 2px solid var(--brass-bright);
   outline-offset: 3px;

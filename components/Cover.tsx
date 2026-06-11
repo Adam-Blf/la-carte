@@ -11,7 +11,13 @@ const reveal = {
   }),
 };
 
-export default function Cover({ onOpen }: { onOpen: () => void }) {
+export default function Cover({
+  maison,
+  onOpen,
+}: {
+  maison: string;
+  onOpen: () => void;
+}) {
   return (
     <motion.section
       className="fixed inset-0 z-40"
@@ -53,7 +59,7 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
             animate="show"
             custom={0}
           >
-            Maison A. · depuis toujours
+            {maison} · depuis toujours
           </motion.p>
 
           <motion.h1

@@ -4,8 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { COURSES, DAYS, SERVICES } from "@/data/menu";
 import type { SlotId } from "@/components/Reservation";
-
-const PHONE = "33786466834";
+import { DEFAULT_PHONE, hostInitial, type Host } from "@/lib/host";
 
 function Dashes() {
   return <div className="my-3 border-t border-dashed border-receipt-ink/40" />;
@@ -31,15 +30,20 @@ export default function Receipt({
   selections,
   slots,
   guestName,
+  host,
   onClose,
 }: {
   selections: Set<string>;
   slots: Set<SlotId>;
   guestName: string;
+  host: Host | null;
   onClose: () => void;
 }) {
   const [copied, setCopied] = useState(false);
   const [kitchen, setKitchen] = useState<"idle" | "sent" | "error">("idle");
+  const phone = host ? host.phone : DEFAULT_PHONE;
+  const maison = host ? `MAISON ${hostInitial(host)}.` : "MAISON A.";
+  const signature = host ? `à très vite · ${host.name}` : "à très vite · A.";
 
   // Fermeture au clavier + focus dans la boîte de dialogue
   useEffect(() => {
@@ -101,7 +105,7 @@ export default function Receipt({
 
   const summary = useMemo(() => {
     const lines = [
-      "Réservation · La Carte de Maison A.",
+      `Réservation · La Carte de ${host ? `Maison ${hostInitial(host)}.` : "Maison A."}`,
       guestName ? `Au nom de ${guestName}` : "",
       "",
       "Menu choisi :",
@@ -116,7 +120,7 @@ export default function Receipt({
     return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");
   }, [orderedCourses, slotLabels, guestName, totals]);
 
-  const whatsappUrl = `https://wa.me/${PHONE}?text=${encodeURIComponent(summary)}`;
+  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(summary)}`;
 
   // Dès que l'addition sort, la commande part en cuisine (une seule fois par contenu)
   useEffect(() => {
@@ -132,7 +136,12 @@ export default function Receipt({
     fetch("/api/reservation", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ summary, guestName }),
+      body: JSON.stringify({
+        summary,
+        guestName,
+        hostName: host?.name ?? null,
+        hostPhone: host?.phone ?? null,
+      }),
     })
       .then((res) => {
         if (cancelled) return;
@@ -153,7 +162,7 @@ export default function Receipt({
     return () => {
       cancelled = true;
     };
-  }, [summary, guestName]);
+  }, [summary, guestName, host]);
 
   async function copySummary() {
     try {
@@ -193,7 +202,7 @@ export default function Receipt({
             transition={{ duration: 3.2, times: FEED_TIMES, ease: "linear" }}
           >
             <div className="text-center">
-              <p className="text-lg font-semibold tracking-[0.3em]">MAISON A.</p>
+              <p className="text-lg font-semibold tracking-[0.3em]">{maison}</p>
               <p className="mt-1">la carte des rendez-vous</p>
               <p className="text-receipt-ink/60">
                 quelque part entre deux fous rires
@@ -291,7 +300,7 @@ export default function Receipt({
             <p className="mt-8 text-center font-semibold">
               MERCI DE VOTRE VISITE
             </p>
-            <p className="text-center">à très vite · A.</p>
+            <p className="text-center">{signature}</p>
             <p className="mt-2 text-center text-receipt-ink/60">
               cuisine inspectée par un petit chef très exigeant
             </p>

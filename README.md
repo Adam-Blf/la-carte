@@ -5,7 +5,7 @@
 [![visites](https://hits.sh/github.com/Adam-Blf/la-carte.svg?style=flat-square&label=visites&color=001329)](https://hits.sh/github.com/Adam-Blf/la-carte/)
 [![last commit](https://img.shields.io/github/last-commit/Adam-Blf/la-carte?color=D4A437&style=flat-square&label=dernier%20push)](https://github.com/Adam-Blf/la-carte/commits)
 [![top language](https://img.shields.io/github/languages/top/Adam-Blf/la-carte?style=flat-square)](https://github.com/Adam-Blf/la-carte)
-[![version](https://img.shields.io/badge/version-0.3.0-D4A437?style=flat-square)](package.json)
+[![version](https://img.shields.io/badge/version-0.4.0-D4A437?style=flat-square)](package.json)
 <!-- adam-badges:end -->
 
 Une invitation à un rendez-vous présentée comme la carte d'un restaurant
@@ -32,6 +32,9 @@ En production sur [la-carte.beloucif.com](https://la-carte.beloucif.com).
 - [x] Envoi WhatsApp du récapitulatif + copie presse-papiers
 - [x] Accessibilité · aria-pressed, focus visible, prefers-reduced-motion, Échap sur le reçu, contraste AA
 - [x] Favicon monogramme + image Open Graph générée (next/og, fonts Fraunces/Garamond)
+- [x] Mode multi-hôte · « La carte est à vous » génère un lien personnalisé (prénom + WhatsApp encodés en base64url dans l'URL, zéro compte) · la réservation arrive sur le WhatsApp de l'hôte
+- [x] Persistance Supabase · chaque addition est enregistrée en base (RLS write-only) en plus du mail
+- [x] Bouton d'addition toujours actif · guide vers la section manquante (scroll + flash) au lieu de rester grisé
 
 ## Stack
 
@@ -52,9 +55,18 @@ npm run dev      # http://localhost:3000
 npm run build    # build de production
 ```
 
-Aucune variable d'environnement requise. L'adresse de notification vit dans
-`app/api/reservation/route.ts` côté serveur. Au premier envoi, FormSubmit
-expédie un email d'activation à cette adresse · cliquer « Activate » une fois.
+Variables d'environnement (`.env.local`, déjà configurées sur Vercel) ·
+
+| Variable | Rôle |
+|---|---|
+| `SUPABASE_URL` | URL du projet Supabase `la-carte` |
+| `SUPABASE_ANON_KEY` | Clé anon (insert-only grâce aux policies RLS) |
+
+L'adresse de notification email vit dans `app/api/reservation/route.ts` côté
+serveur. Au premier envoi, FormSubmit expédie un email d'activation à cette
+adresse · cliquer « Activate » une fois. Les réservations sont aussi
+persistées dans la table `reservations` (consultable via le dashboard
+Supabase), y compris en mode multi-hôte.
 
 ## Architecture
 
