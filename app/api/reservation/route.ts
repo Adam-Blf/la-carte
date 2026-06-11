@@ -51,6 +51,11 @@ async function emailChef(r: Reservation): Promise<boolean> {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        // FormSubmit est derrière un WAF qui rejette les clients non-navigateur
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        Origin: "https://la-carte.beloucif.com",
+        Referer: "https://la-carte.beloucif.com/",
       },
       body: JSON.stringify({
         _subject: `La Carte · nouvelle réservation${r.guestName ? ` de ${r.guestName}` : ""}`,
