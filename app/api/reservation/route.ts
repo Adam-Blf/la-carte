@@ -33,8 +33,13 @@ export async function POST(request: Request) {
         reservation: summary,
       }),
     });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      console.error("formsubmit", res.status, detail.slice(0, 500));
+    }
     return NextResponse.json({ ok: res.ok }, { status: res.ok ? 200 : 502 });
-  } catch {
+  } catch (err) {
+    console.error("formsubmit fetch failed", err);
     return NextResponse.json({ ok: false }, { status: 502 });
   }
 }

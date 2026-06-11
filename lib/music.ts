@@ -43,9 +43,11 @@ export function resumeMusic() {
   else startMusic();
 }
 
+// Préférence en sessionStorage volontairement · couper la musique ne vaut que
+// pour la visite en cours, elle revient à la prochaine ouverture de la carte.
 export function musicPrefOff(): boolean {
   try {
-    return localStorage.getItem("carte-musique") === "off";
+    return sessionStorage.getItem("carte-musique") === "off";
   } catch {
     return false;
   }
@@ -53,7 +55,7 @@ export function musicPrefOff(): boolean {
 
 export function setMusicPref(off: boolean) {
   try {
-    localStorage.setItem("carte-musique", off ? "off" : "on");
+    sessionStorage.setItem("carte-musique", off ? "off" : "on");
   } catch {
     // stockage privé bloqué · préférence non persistée
   }
