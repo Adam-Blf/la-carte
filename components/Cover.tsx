@@ -14,11 +14,22 @@ const reveal = {
 export default function Cover({ onOpen }: { onOpen: () => void }) {
   return (
     <motion.section
-      className="fixed inset-0 z-40 flex items-center justify-center bg-paper p-4 sm:p-8"
-      exit={{ y: "-100%", transition: { duration: 1.1, ease: [0.7, 0, 0.2, 1] } }}
+      className="fixed inset-0 z-40"
+      style={{ perspective: "2200px" }}
+      exit={{ opacity: 0, transition: { duration: 0.3, delay: 1.15 } }}
       aria-label="Couverture de la carte"
     >
-      <div className="relative flex h-full w-full items-center justify-center border border-line">
+      {/* La couverture pivote sur sa tranche gauche, comme une carte qu'on ouvre */}
+      <motion.div
+        className="flex h-full w-full items-center justify-center overflow-y-auto bg-paper p-4 sm:p-8"
+        style={{ transformOrigin: "left center", willChange: "transform" }}
+        exit={{
+          rotateY: -112,
+          boxShadow: "70px 0 90px rgba(0, 0, 0, 0.38)",
+          transition: { duration: 1.25, ease: [0.65, 0, 0.22, 1] },
+        }}
+      >
+      <div className="relative flex h-full min-h-fit w-full items-center justify-center border border-line py-8">
         <div className="pointer-events-none absolute inset-2 border border-line" />
 
         {/* Ornements d'angle */}
@@ -127,6 +138,7 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
           </motion.p>
         </div>
       </div>
+      </motion.div>
     </motion.section>
   );
 }
