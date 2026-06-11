@@ -30,13 +30,15 @@ export default function CommandBar({
           exit={{ y: 90, opacity: 0 }}
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
         >
-          <div className="flex w-full max-w-md items-center justify-between gap-4 border border-line bg-paper/95 py-3 pr-3 pl-5 shadow-xl shadow-black/10 backdrop-blur">
-            <p className="smallcaps text-xs text-ink-soft">{hint}</p>
+          <div className="flex w-full max-w-md items-center justify-between gap-3 border border-line bg-paper/95 py-3 pr-3 pl-4 shadow-xl shadow-black/10 backdrop-blur sm:gap-4 sm:pl-5">
+            <p className="smallcaps min-w-0 flex-1 truncate text-xs text-ink-soft">
+              {hint}
+            </p>
             <button
               type="button"
               onClick={onRequestBill}
               disabled={!ready}
-              className={`smallcaps shrink-0 px-5 py-3 text-sm transition-all duration-300 ${
+              className={`smallcaps shrink-0 px-4 py-3 text-xs transition-all duration-300 sm:px-5 sm:text-sm ${
                 ready
                   ? "cursor-pointer bg-brass text-paper hover:bg-brass-bright"
                   : "cursor-not-allowed border border-line text-ink-soft/60"
