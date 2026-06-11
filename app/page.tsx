@@ -8,8 +8,10 @@ import Reservation, { type SlotId } from "@/components/Reservation";
 import CommandBar from "@/components/CommandBar";
 import Receipt from "@/components/Receipt";
 import ThemeToggle from "@/components/ThemeToggle";
+import MusicToggle from "@/components/MusicToggle";
 import { COURSES } from "@/data/menu";
 import { VERSION } from "@/lib/version";
+import { musicPrefOff, startMusic } from "@/lib/music";
 
 const PLAT_IDS = new Set(
   COURSES.find((c) => c.id === "plats")?.items.map((i) => i.id) ?? [],
@@ -49,9 +51,18 @@ export default function Home() {
   return (
     <>
       <ThemeToggle />
+      {opened && <MusicToggle />}
 
       <AnimatePresence>
-        {!opened && <Cover key="cover" onOpen={() => setOpened(true)} />}
+        {!opened && (
+          <Cover
+            key="cover"
+            onOpen={() => {
+              setOpened(true);
+              if (!musicPrefOff()) startMusic();
+            }}
+          />
+        )}
       </AnimatePresence>
 
       {opened && (
