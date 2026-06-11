@@ -5,7 +5,8 @@
   --paper-deep: #efe6d2;
   --ink: #0e1d31;
   --ink-soft: #3c4a5e;
-  --brass: #a8842c;
+  /* Laiton encré · 4,6:1 sur papier crème pour le texte · le vif sert aux fonds */
+  --brass: #8c6c1d;
   --brass-bright: #d4a437;
   --line: rgba(14, 29, 49, 0.28);
   --receipt-paper: #fdfaf2;
@@ -39,6 +40,12 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+button,
+a,
+input {
+  touch-action: manipulation;
 }
 
 body {

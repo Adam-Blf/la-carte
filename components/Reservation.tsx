@@ -66,7 +66,8 @@ export default function Reservation({
               <tr key={day.id}>
                 <th
                   scope="row"
-                  className="smallcaps pr-3 text-left text-xs font-normal text-ink-soft sm:text-sm"
+                  className="smallcaps pr-3 text-left text-xs font-normal whitespace-nowrap text-ink-soft sm:text-sm"
+                  style={{ letterSpacing: "0.16em" }}
                 >
                   {day.label}
                 </th>

@@ -37,7 +37,8 @@ export const metadata: Metadata = {
   },
 };
 
-const themeInit = `try{var t=localStorage.getItem("carte-theme");if(t==="soir"||t==="jour")document.documentElement.dataset.theme=t}catch(e){}`;
+// Choix manuel prioritaire · sinon le thème suit le service en cours (soir dès 19 h, jour dès 7 h)
+const themeInit = `try{var t=localStorage.getItem("carte-theme");if(t!=="soir"&&t!=="jour"){var h=new Date().getHours();t=(h>=19||h<7)?"soir":"jour"}document.documentElement.dataset.theme=t}catch(e){}`;
 
 export default function RootLayout({
   children,

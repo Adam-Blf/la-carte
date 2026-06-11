@@ -41,6 +41,15 @@ export default function Receipt({
   const [copied, setCopied] = useState(false);
   const [kitchen, setKitchen] = useState<"idle" | "sent" | "error">("idle");
 
+  // Fermeture au clavier + focus dans la boîte de dialogue
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   const orderedCourses = useMemo(
     () =>
       COURSES.map((course) => ({
@@ -59,6 +68,28 @@ export default function Receipt({
       ),
     [slots],
   );
+
+  // L'addition · somme des prix fantaisistes ("2 fous rires" + "1 anecdote"…)
+  const totals = useMemo(() => {
+    const counted: { label: string; n: number }[] = [];
+    let offered = 0;
+    let momentSum = 0;
+    for (const { items } of orderedCourses) {
+      for (const item of items) {
+        const m = item.price.match(/^(\d+)\s+(.+)$/);
+        if (m) {
+          const n = parseInt(m[1], 10);
+          momentSum += n;
+          const existing = counted.find((c) => c.label === m[2]);
+          if (existing) existing.n += n;
+          else counted.push({ label: m[2], n });
+        } else {
+          offered += 1;
+        }
+      }
+    }
+    return { counted, offered, momentSum };
+  }, [orderedCourses]);
 
   const today = useMemo(
     () =>
@@ -80,10 +111,10 @@ export default function Receipt({
       "",
       `Disponibilités : ${slotLabels.join(" / ")}`,
       "",
-      "Total : 0,00 € · réglé d'avance par la maison",
+      `Total : ${totals.momentSum} moments dus · 0,00 € réglés d'avance par la maison`,
     ];
     return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");
-  }, [orderedCourses, slotLabels, guestName]);
+  }, [orderedCourses, slotLabels, guestName, totals]);
 
   const whatsappUrl = `https://wa.me/${PHONE}?text=${encodeURIComponent(summary)}`;
 
@@ -144,6 +175,8 @@ export default function Receipt({
       role="dialog"
       aria-modal="true"
       aria-label="Votre addition"
+      tabIndex={-1}
+      ref={(node) => node?.focus()}
     >
       <div
         className="mx-auto flex min-h-full w-full max-w-sm flex-col items-center px-4 pb-16"
@@ -177,8 +210,10 @@ export default function Receipt({
                 <p className="font-semibold uppercase">{course.title}</p>
                 {items.map((item) => (
                   <div key={item.id} className="mt-1">
-                    <Row left={`1× ${item.name}`} right="" />
-                    <p className="pl-4 text-receipt-ink/60">{item.price}</p>
+                    <p>1× {item.name}</p>
+                    <p className="text-right text-receipt-ink/60">
+                      {item.price}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -186,11 +221,26 @@ export default function Receipt({
 
             <Dashes />
 
-            <Row left="SOUS-TOTAL" right="inestimable" />
+            <p className="font-semibold uppercase">Addition</p>
+            {totals.counted.map(({ n, label }) => (
+              <Row key={label} left={label} right={String(n)} />
+            ))}
+            {totals.offered > 0 && (
+              <Row
+                left="attentions de la maison"
+                right={`${totals.offered} offertes`}
+              />
+            )}
+            <div className="mt-2">
+              <Row
+                left="SOUS-TOTAL"
+                right={`${totals.momentSum} moments dus`}
+              />
+            </div>
             <Row left="TVA (100% intentions)" right="incluse" />
             <Row left="POURBOIRE" right="en sourires" />
             <div className="mt-2 text-base font-semibold">
-              <Row left="TOTAL" right="0,00 €" />
+              <Row left="TOTAL EN EUROS" right="0,00 €" />
             </div>
             <p className="mt-1 text-center font-semibold uppercase">
               réglé d&apos;avance par la maison

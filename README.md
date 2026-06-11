@@ -5,7 +5,7 @@
 [![visites](https://hits.sh/github.com/Adam-Blf/la-carte.svg?style=flat-square&label=visites&color=001329)](https://hits.sh/github.com/Adam-Blf/la-carte/)
 [![last commit](https://img.shields.io/github/last-commit/Adam-Blf/la-carte?color=D4A437&style=flat-square&label=dernier%20push)](https://github.com/Adam-Blf/la-carte/commits)
 [![top language](https://img.shields.io/github/languages/top/Adam-Blf/la-carte?style=flat-square)](https://github.com/Adam-Blf/la-carte)
-[![version](https://img.shields.io/badge/version-0.2.0-D4A437?style=flat-square)](package.json)
+[![version](https://img.shields.io/badge/version-0.3.0-D4A437?style=flat-square)](package.json)
 <!-- adam-badges:end -->
 
 Une invitation à un rendez-vous présentée comme la carte d'un restaurant
@@ -30,7 +30,8 @@ En production sur [la-carte.beloucif.com](https://la-carte.beloucif.com).
 - [x] Reçu thermique animé · avance papier saccadée, bord déchiré, code-barres CSS, tampon laiton
 - [x] Notification email automatique au chef à chaque addition (route API + FormSubmit)
 - [x] Envoi WhatsApp du récapitulatif + copie presse-papiers
-- [x] Accessibilité · aria-pressed, focus visible, prefers-reduced-motion
+- [x] Accessibilité · aria-pressed, focus visible, prefers-reduced-motion, Échap sur le reçu, contraste AA
+- [x] Favicon monogramme + image Open Graph générée (next/og, fonts Fraunces/Garamond)
 
 ## Stack
 
