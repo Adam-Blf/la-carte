@@ -5,20 +5,30 @@ import { AnimatePresence, motion } from "framer-motion";
 export default function CommandBar({
   dishCount,
   slotCount,
-  ready,
+  hasPlat,
   onRequestBill,
 }: {
   dishCount: number;
   slotCount: number;
-  ready: boolean;
+  hasPlat: boolean;
   onRequestBill: () => void;
 }) {
-  const hint =
-    dishCount === 0
-      ? "Choisissez au moins un plat"
-      : slotCount === 0
-        ? "Indiquez vos disponibilités"
-        : `${dishCount} choix · ${slotCount} ${slotCount > 1 ? "créneaux" : "créneau"}`;
+  const ready = hasPlat && slotCount > 0;
+  const hint = !hasPlat
+    ? "Il manque un plat à votre menu"
+    : slotCount === 0
+      ? "Cochez vos disponibilités"
+      : `${dishCount} choix · ${slotCount} ${slotCount > 1 ? "créneaux" : "créneau"}`;
+
+  // Toujours cliquable · si la commande est incomplète, on guide vers ce qui manque
+  function handleClick() {
+    if (ready) {
+      onRequestBill();
+      return;
+    }
+    const target = !hasPlat ? "plats" : "reservation";
+    document.getElementById(target)?.scrollIntoView({ behavior: "smooth" });
+  }
 
   return (
     <AnimatePresence>
@@ -31,20 +41,19 @@ export default function CommandBar({
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
         >
           <div className="flex w-full max-w-md items-center justify-between gap-3 border border-line bg-paper/95 py-3 pr-3 pl-4 shadow-xl shadow-black/10 backdrop-blur sm:gap-4 sm:pl-5">
-            <p className="smallcaps min-w-0 flex-1 truncate text-xs text-ink-soft">
+            <p className="smallcaps min-w-0 flex-1 text-xs leading-snug text-ink-soft">
               {hint}
             </p>
             <button
               type="button"
-              onClick={onRequestBill}
-              disabled={!ready}
-              className={`smallcaps shrink-0 px-4 py-3 text-xs transition-all duration-300 sm:px-5 sm:text-sm ${
+              onClick={handleClick}
+              className={`smallcaps shrink-0 cursor-pointer px-4 py-3 text-xs transition-all duration-300 sm:px-5 sm:text-sm ${
                 ready
-                  ? "cursor-pointer bg-brass text-paper hover:bg-brass-bright"
-                  : "cursor-not-allowed border border-line text-ink-soft/60"
+                  ? "bg-brass text-paper hover:bg-brass-bright"
+                  : "border border-brass text-brass hover:bg-paper-deep"
               }`}
             >
-              L&apos;addition, s&apos;il vous plaît
+              {ready ? "L'addition, s'il vous plaît" : "Compléter ma commande"}
             </button>
           </div>
         </motion.div>

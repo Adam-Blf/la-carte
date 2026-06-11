@@ -97,7 +97,12 @@ export default function Carte({
       </p>
 
       {COURSES.map((course) => (
-        <section key={course.id} className="pt-20" aria-label={course.title}>
+        <section
+          key={course.id}
+          id={course.id}
+          className="scroll-mt-10 pt-20"
+          aria-label={course.title}
+        >
           <SectionHeader course={course} />
           <ul className="mt-10 space-y-1">
             {course.items.map((item, i) => (

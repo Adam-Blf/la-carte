@@ -46,7 +46,6 @@ export default function Home() {
     () => [...selections].some((id) => PLAT_IDS.has(id)),
     [selections],
   );
-  const ready = hasPlat && slots.size > 0;
 
   return (
     <>
@@ -102,7 +101,7 @@ export default function Home() {
         <CommandBar
           dishCount={selections.size}
           slotCount={slots.size}
-          ready={ready}
+          hasPlat={hasPlat}
           onRequestBill={() => setBillOpen(true)}
         />
       )}
