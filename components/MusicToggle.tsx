@@ -24,7 +24,7 @@ export default function MusicToggle() {
       onClick={toggle}
       aria-label={off ? "Remettre la musique" : "Couper la musique"}
       aria-pressed={!off}
-      className="smallcaps fixed top-5 left-5 z-[60] cursor-pointer border border-line bg-paper/80 px-4 py-2 text-xs text-ink-soft backdrop-blur transition-colors duration-300 hover:border-brass hover:text-ink"
+      className="smallcaps fixed top-5 left-5 z-[60] min-h-11 cursor-pointer border border-line bg-paper/80 px-4 py-2 text-xs text-ink-soft backdrop-blur transition-colors duration-300 hover:border-brass hover:text-ink"
     >
       <span aria-hidden>♪</span> {off ? "musique coupée" : "musique"}
     </button>
