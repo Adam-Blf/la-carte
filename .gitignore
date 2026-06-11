@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# one-shot local scripts (credentials)
+scripts/*.local.py
