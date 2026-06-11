@@ -114,6 +114,13 @@ export const COURSES: Course[] = [
         price: "2 mains pleines de farine",
       },
       {
+        id: "ratatouille",
+        name: "La ratatouille du film",
+        description:
+          "On cuisine à deux le plat qui a fait pleurer un critique, Le Festin en fond sonore.",
+        price: "1 critique conquise",
+      },
+      {
         id: "cinema",
         name: "Cinéma de quartier",
         description:
@@ -198,6 +205,13 @@ export const COURSES: Course[] = [
         description:
           "Service de fin de soirée, conversation prolongée incluse.",
         price: "offert",
+      },
+      {
+        id: "marathon",
+        name: "Ratatouille sur grand écran",
+        description:
+          "Le film qui a donné sa musique à cette carte, plaid et plateau de fromages inclus.",
+        price: "1 larme discrète",
       },
     ],
   },

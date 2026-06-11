@@ -242,6 +242,9 @@ export default function Receipt({
               MERCI DE VOTRE VISITE
             </p>
             <p className="text-center">à très vite · A.</p>
+            <p className="mt-2 text-center text-receipt-ink/60">
+              cuisine inspectée par un petit chef très exigeant
+            </p>
           </motion.div>
         </div>
 

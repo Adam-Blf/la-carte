@@ -5,7 +5,7 @@
 [![visites](https://hits.sh/github.com/Adam-Blf/la-carte.svg?style=flat-square&label=visites&color=001329)](https://hits.sh/github.com/Adam-Blf/la-carte/)
 [![last commit](https://img.shields.io/github/last-commit/Adam-Blf/la-carte?color=D4A437&style=flat-square&label=dernier%20push)](https://github.com/Adam-Blf/la-carte/commits)
 [![top language](https://img.shields.io/github/languages/top/Adam-Blf/la-carte?style=flat-square)](https://github.com/Adam-Blf/la-carte)
-[![version](https://img.shields.io/badge/version-0.1.0-D4A437?style=flat-square)](package.json)
+[![version](https://img.shields.io/badge/version-0.2.0-D4A437?style=flat-square)](package.json)
 <!-- adam-badges:end -->
 
 Une invitation à un rendez-vous présentée comme la carte d'un restaurant
@@ -14,13 +14,18 @@ accords), coche ses disponibilités dans le carnet de réservations, puis
 demande l'addition · un ticket de caisse thermique s'imprime à l'écran,
 tamponné « Réservation confirmée », total 0,00 € réglé d'avance par la maison.
 
+En production sur [la-carte.beloucif.com](https://la-carte.beloucif.com).
+
 ## Features
 
 - [x] Couverture de carte animée (révélation séquencée, double filet, ornements)
-- [x] 24 activités réparties en 4 services · Mises en bouche, Plats, Desserts, Accords & suppléments
+- [x] 26 activités réparties en 4 services · Mises en bouche, Plats, Desserts, Accords & suppléments
+- [x] Ambiance sonore · Le Festin (Ratatouille) en boucle à partir de la 20e seconde, toggle musique
+- [x] Clins d'œil Ratatouille · citation Gusteau, ratatouille du film à la carte, petit chef sur le reçu
 - [x] Prix fantaisistes avec points de conduite typographiques
 - [x] Sélection interactive multi-services (au moins un plat requis)
 - [x] Carnet de réservations · grille 7 jours × 3 services, animations en cascade
+- [x] Responsive et adaptatif · grille verticale mobile, prix repliables, barre de commande compacte
 - [x] Thèmes Service de jour / Service du soir (papier crème ↔ encre navy), persistés
 - [x] Reçu thermique animé · avance papier saccadée, bord déchiré, code-barres CSS, tampon laiton
 - [x] Notification email automatique au chef à chaque addition (route API + FormSubmit)
