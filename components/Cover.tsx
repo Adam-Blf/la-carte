@@ -104,11 +104,24 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
           </motion.button>
 
           <motion.p
-            className="smallcaps mt-10 text-xs text-ink-soft"
+            className="mt-10 max-w-xs text-base italic text-ink-soft"
             variants={reveal}
             initial="hidden"
             animate="show"
             custom={6}
+          >
+            « Tout le monde peut cuisiner. »
+            <span className="smallcaps mt-1 block text-xs not-italic">
+              Chef Gusteau
+            </span>
+          </motion.p>
+
+          <motion.p
+            className="smallcaps mt-6 text-xs text-ink-soft"
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={7}
           >
             Table pour deux · service unique
           </motion.p>

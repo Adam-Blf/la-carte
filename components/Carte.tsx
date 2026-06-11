@@ -60,7 +60,7 @@ function CarteItem({
             ✓
           </span>
           <span
-            className={`font-display text-xl transition-colors duration-300 ${
+            className={`font-display text-lg transition-colors duration-300 sm:text-xl ${
               selected ? "text-brass" : ""
             }`}
           >
@@ -68,7 +68,7 @@ function CarteItem({
           </span>
           <span className="leader" aria-hidden />
           <span
-            className={`shrink-0 text-base italic ${
+            className={`max-w-[38%] shrink-0 text-right text-sm italic sm:max-w-none sm:text-base ${
               selected ? "text-brass" : "text-ink-soft"
             }`}
           >

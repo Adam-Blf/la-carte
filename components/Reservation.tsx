@@ -40,42 +40,41 @@ export default function Reservation({
       </header>
 
       <motion.div
-        className="mt-12 overflow-x-auto"
+        className="mx-auto mt-12 max-w-xl"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
       >
-        <table className="w-full min-w-[560px] border-collapse">
+        <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="w-28" aria-label="Service" />
-              {DAYS.map((day) => (
+              <th className="w-24 sm:w-28" aria-label="Jour" />
+              {SERVICES.map((service) => (
                 <th
-                  key={day.id}
+                  key={service.id}
                   scope="col"
-                  className="smallcaps pb-4 text-center text-sm font-normal text-ink-soft"
+                  className="smallcaps pb-4 text-center text-xs font-normal text-ink-soft sm:text-sm"
                 >
-                  <span className="sm:hidden">{day.short}</span>
-                  <span className="hidden sm:inline">{day.label}</span>
+                  {service.label}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {SERVICES.map((service) => (
-              <tr key={service.id}>
+            {DAYS.map((day, di) => (
+              <tr key={day.id}>
                 <th
                   scope="row"
-                  className="smallcaps pr-4 text-left text-sm font-normal text-ink-soft"
+                  className="smallcaps pr-3 text-left text-xs font-normal text-ink-soft sm:text-sm"
                 >
-                  {service.label}
+                  {day.label}
                 </th>
-                {DAYS.map((day, di) => {
+                {SERVICES.map((service) => {
                   const id = `${day.id}-${service.id}` as SlotId;
                   const active = slots.has(id);
                   return (
-                    <td key={id} className="p-1.5">
+                    <td key={id} className="p-1 sm:p-1.5">
                       <motion.button
                         type="button"
                         onClick={() => onToggleSlot(id)}
@@ -89,7 +88,7 @@ export default function Reservation({
                         initial={{ opacity: 0, scale: 0.85 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        transition={{ delay: di * 0.04, duration: 0.45 }}
+                        transition={{ delay: di * 0.05, duration: 0.45 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <motion.span
