@@ -1,4 +1,4 @@
-# La Carte · Maison A.
+# La Carte - Maison A.
 
 <!-- adam-badges:start -->
 [![commits](https://img.shields.io/github/commit-activity/t/Adam-Blf/la-carte?color=001329&label=commits&style=flat-square)](https://github.com/Adam-Blf/la-carte/commits)
@@ -11,7 +11,7 @@
 Une invitation à un rendez-vous présentée comme la carte d'un restaurant
 gastronomique. L'invitée compose son menu (mise en bouche, plat, dessert,
 accords), coche ses disponibilités dans le carnet de réservations, puis
-demande l'addition · un ticket de caisse thermique s'imprime à l'écran,
+demande l'addition - un ticket de caisse thermique s'imprime à l'écran,
 tamponné « Réservation confirmée », total 0,00 € réglé d'avance par la maison.
 
 En production sur [la-carte.beloucif.com](https://la-carte.beloucif.com).
@@ -19,31 +19,31 @@ En production sur [la-carte.beloucif.com](https://la-carte.beloucif.com).
 ## Features
 
 - [x] Couverture de carte animée (révélation séquencée, double filet, ornements)
-- [x] 26 activités réparties en 4 services · Mises en bouche, Plats, Desserts, Accords & suppléments
-- [x] Ambiance sonore · Le Festin (Ratatouille) en boucle à partir de la 20e seconde, toggle musique
-- [x] Clins d'œil Ratatouille · citation Gusteau, ratatouille du film à la carte, petit chef sur le reçu
+- [x] 26 activités réparties en 4 services - Mises en bouche, Plats, Desserts, Accords & suppléments
+- [x] Ambiance sonore - Le Festin (Ratatouille) en boucle à partir de la 20e seconde, toggle musique
+- [x] Clins d'œil Ratatouille - citation Gusteau, ratatouille du film à la carte, petit chef sur le reçu
 - [x] Prix fantaisistes avec points de conduite typographiques
 - [x] Sélection interactive multi-services (au moins un plat requis)
-- [x] Carnet de réservations · grille 7 jours × 3 services, animations en cascade
-- [x] Responsive et adaptatif · grille verticale mobile, prix repliables, barre de commande compacte
+- [x] Carnet de réservations - grille 7 jours × 3 services, animations en cascade
+- [x] Responsive et adaptatif - grille verticale mobile, prix repliables, barre de commande compacte
 - [x] Thèmes Service de jour / Service du soir (papier crème ↔ encre navy), persistés
-- [x] Reçu thermique animé · avance papier saccadée, bord déchiré, code-barres CSS, tampon laiton
+- [x] Reçu thermique animé - avance papier saccadée, bord déchiré, code-barres CSS, tampon laiton
 - [x] Notification email automatique au chef à chaque addition (route API + FormSubmit)
 - [x] Envoi WhatsApp du récapitulatif + copie presse-papiers
-- [x] Accessibilité · aria-pressed, focus visible, prefers-reduced-motion, Échap sur le reçu, contraste AA
+- [x] Accessibilité - aria-pressed, focus visible, prefers-reduced-motion, Échap sur le reçu, contraste AA
 - [x] Favicon monogramme + image Open Graph générée (next/og, fonts Fraunces/Garamond)
-- [x] Mode multi-hôte · « La carte est à vous » génère un lien personnalisé (prénom + WhatsApp encodés en base64url dans l'URL, zéro compte) · la réservation arrive sur le WhatsApp de l'hôte
-- [x] Persistance Supabase · chaque addition est enregistrée en base (RLS write-only) en plus du mail
-- [x] Bouton d'addition toujours actif · guide vers la section manquante (scroll + flash) au lieu de rester grisé
+- [x] Mode multi-hôte - « La carte est à vous » génère un lien personnalisé (prénom + WhatsApp encodés en base64url dans l'URL, zéro compte) - la réservation arrive sur le WhatsApp de l'hôte
+- [x] Persistance Supabase - chaque addition est enregistrée en base (RLS write-only) en plus du mail
+- [x] Bouton d'addition toujours actif - guide vers la section manquante (scroll + flash) au lieu de rester grisé
 
 ## Stack
 
 | Couche | Choix |
 |---|---|
 | Framework | Next.js 16 (App Router, Turbopack) |
-| UI | React 19 · Tailwind CSS 4 |
+| UI | React 19 - Tailwind CSS 4 |
 | Animations | framer-motion 12 |
-| Typographie | Fraunces · EB Garamond · IBM Plex Mono |
+| Typographie | Fraunces - EB Garamond - IBM Plex Mono |
 | Email | FormSubmit (via route handler, adresse jamais exposée au client) |
 | Déploiement cible | Vercel |
 
@@ -55,7 +55,7 @@ npm run dev      # http://localhost:3000
 npm run build    # build de production
 ```
 
-Variables d'environnement (`.env.local`, déjà configurées sur Vercel) ·
+Variables d'environnement (`.env.local`, déjà configurées sur Vercel) -
 
 | Variable | Rôle |
 |---|---|
@@ -64,7 +64,7 @@ Variables d'environnement (`.env.local`, déjà configurées sur Vercel) ·
 
 L'adresse de notification email vit dans `app/api/reservation/route.ts` côté
 serveur. Au premier envoi, FormSubmit expédie un email d'activation à cette
-adresse · cliquer « Activate » une fois. Les réservations sont aussi
+adresse - cliquer « Activate » une fois. Les réservations sont aussi
 persistées dans la table `reservations` (consultable via le dashboard
 Supabase), y compris en mode multi-hôte.
 
@@ -72,7 +72,7 @@ Supabase), y compris en mode multi-hôte.
 
 ```mermaid
 flowchart TB
-    L["app/layout.tsx<br/>fonts · theme · metadonnees"]
+    L["app/layout.tsx<br/>fonts - theme - metadonnees"]
     P["app/page.tsx<br/>orchestration"]
     COV["Cover<br/>couverture"]
     CAR["Carte<br/>menu + items selectionnables"]
@@ -90,7 +90,7 @@ flowchart TB
 ```
 app/
   layout.tsx              fonts, thème, métadonnées
-  page.tsx                orchestration · couverture → carte → réservation → addition
+  page.tsx                orchestration - couverture → carte → réservation → addition
   api/reservation/        notification email du chef
 components/
   Cover.tsx               couverture de la carte
@@ -100,9 +100,9 @@ components/
   Receipt.tsx             ticket thermique animé + envoi
   ThemeToggle.tsx         bascule jour / soir
 data/menu.ts              contenu de la carte (activités, prix, services)
-lib/version.ts            singleton de version (source · package.json)
+lib/version.ts            singleton de version (source - package.json)
 ```
 
 ## Licence
 
-Projet personnel · tous droits réservés.
+Projet personnel - tous droits réservés.
