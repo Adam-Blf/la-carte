@@ -70,6 +70,23 @@ Supabase), y compris en mode multi-hôte.
 
 ## Architecture
 
+```mermaid
+flowchart TB
+    L["app/layout.tsx<br/>fonts · theme · metadonnees"]
+    P["app/page.tsx<br/>orchestration"]
+    COV["Cover<br/>couverture"]
+    CAR["Carte<br/>menu + items selectionnables"]
+    RES["Reservation<br/>disponibilites + prenom"]
+    REC["Receipt<br/>ticket thermique anime"]
+    MENU["data/menu.ts<br/>contenu de la carte"]
+    APIR["app/api/reservation<br/>notification email du chef"]
+    L --> P
+    P --> COV --> CAR --> RES --> REC
+    MENU --> CAR
+    REC --> APIR
+```
+
+
 ```
 app/
   layout.tsx              fonts, thème, métadonnées
