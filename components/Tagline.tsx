@@ -1,81 +1,183 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const PHRASES = [
-  "Ce soir, la maison vous offre l'essentiel : du temps.",
-  "L'addition ? Déjà réglée. Le reste vous appartient.",
-  "Chaque rendez-vous mérite sa propre légende.",
-  "La meilleure soirée est celle qu'on n'avait pas prévu d'avoir.",
-  "On ne choisit pas ce qu'on aime. On compose.",
-  "Le secret d'une belle soirée : ne rien presser.",
-  "Deux couverts, une fenêtre sur la soirée.",
-  "Ce soir, vous êtes les auteurs du menu.",
-  "Tout commence par une table pour deux.",
-  "Un seul ingrédient obligatoire : avoir envie d'y être.",
-  "Le chef recommande de laisser la soirée surprendre.",
-  "Certains soirs se souviennent d'eux-mêmes.",
-  "La carte change. Les souvenirs, eux, restent.",
-  "Service continu jusqu'aux dernières étoiles.",
-  "La maison n'accepte que les réservations sincères.",
-  "Mise en bouche, plat, dessert. Et puis encore.",
-  "Ce qu'on commande ensemble finit toujours mieux.",
-  "Aucune allergie à la bonne humeur.",
-  "La soirée idéale n'existe pas. La vôtre, si.",
-  "Nous ne servons que des soirées uniques.",
-  "Fermé le lendemain qui gronde. Ouvert ce soir.",
-  "Prix fixe : zéro euro, une présence.",
-  "La table est mise. Il ne manque que vous.",
-  "Tout le monde peut cuisiner une belle soirée.",
-  "Notre spécialité : les moments qu'on raconte après.",
-];
-
-function pick(exclude: number): number {
-  let next: number;
-  do { next = Math.floor(Math.random() * PHRASES.length); } while (next === exclude);
-  return next;
-}
+type Step = "form" | "loading" | "result";
 
 export default function Tagline() {
-  const [idx, setIdx] = useState<number | null>(null);
-  const [key, setKey] = useState(0);
+  const [step, setStep] = useState<Step>("form");
+  const [personne, setPersonne] = useState("");
+  const [situation, setSituation] = useState("");
+  const [vibe, setVibe] = useState("");
+  const [phrases, setPhrases] = useState<string[]>([]);
+  const [selected, setSelected] = useState(0);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    setIdx(Math.floor(Math.random() * PHRASES.length));
-  }, []);
-
-  const next = useCallback(() => {
-    setIdx((prev) => pick(prev ?? 0));
-    setKey((k) => k + 1);
-  }, []);
-
-  if (idx === null) return null;
+  async function generate() {
+    if (!personne.trim() || !situation.trim()) return;
+    setStep("loading");
+    setError("");
+    try {
+      const res = await fetch("/api/accroche", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ personne, situation, vibe }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.phrases?.length) throw new Error(data.error || "Erreur");
+      setPhrases(data.phrases);
+      setSelected(0);
+      setStep("result");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur serveur");
+      setStep("form");
+    }
+  }
 
   return (
-    <div className="flex flex-col items-center gap-4 pt-6">
-      <div className="relative h-14 w-full max-w-sm">
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={key}
-            className="absolute inset-0 flex items-center justify-center px-2 text-center text-base italic text-ink-soft"
-            initial={{ opacity: 0, y: 8 }}
+    <div className="mt-10 w-full border-t border-line pt-8">
+      <p className="smallcaps mb-6 text-center text-xs text-brass tracking-widest">
+        ✦ Générateur d'accroches ✦
+      </p>
+
+      <AnimatePresence mode="wait">
+        {step === "form" && (
+          <motion.div
+            key="form"
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-col gap-4"
           >
-            {PHRASES[idx]}
-          </motion.p>
-        </AnimatePresence>
-      </div>
-      <button
-        type="button"
-        onClick={next}
-        aria-label="Nouvelle phrase"
-        className="smallcaps cursor-pointer text-xs text-brass/60 transition-colors duration-300 hover:text-brass"
-      >
-        ✦ une autre
-      </button>
+            <div className="flex flex-col gap-1">
+              <label className="smallcaps text-xs text-ink-soft">
+                Qui est-elle / il ?
+              </label>
+              <input
+                type="text"
+                value={personne}
+                onChange={(e) => setPersonne(e.target.value)}
+                placeholder="ex. grande brune, l'air artiste, un livre à la main…"
+                className="border border-line bg-transparent px-4 py-3 text-sm text-ink placeholder-ink-soft/50 outline-none focus:border-brass transition-colors"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="smallcaps text-xs text-ink-soft">
+                La situation / le lieu
+              </label>
+              <input
+                type="text"
+                value={situation}
+                onChange={(e) => setSituation(e.target.value)}
+                placeholder="ex. café du 11e, vernissage, quai de métro…"
+                className="border border-line bg-transparent px-4 py-3 text-sm text-ink placeholder-ink-soft/50 outline-none focus:border-brass transition-colors"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="smallcaps text-xs text-ink-soft">
+                Vibe souhaitée
+              </label>
+              <input
+                type="text"
+                value={vibe}
+                onChange={(e) => setVibe(e.target.value)}
+                placeholder="ex. poétique, audacieux, léger et drôle… (optionnel)"
+                className="border border-line bg-transparent px-4 py-3 text-sm text-ink placeholder-ink-soft/50 outline-none focus:border-brass transition-colors"
+              />
+            </div>
+
+            {error && (
+              <p className="text-center text-xs text-brass/80 italic">{error}</p>
+            )}
+
+            <button
+              type="button"
+              onClick={generate}
+              disabled={!personne.trim() || !situation.trim()}
+              className="smallcaps mt-2 cursor-pointer border border-brass px-8 py-3 text-sm text-ink transition-colors duration-300 hover:bg-brass hover:text-paper disabled:opacity-40 disabled:cursor-default"
+            >
+              Générer des accroches
+            </button>
+          </motion.div>
+        )}
+
+        {step === "loading" && (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center gap-4 py-8"
+          >
+            <motion.span
+              className="text-2xl text-brass"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+            >
+              ✦
+            </motion.span>
+            <p className="smallcaps text-xs text-ink-soft">La maison réfléchit…</p>
+          </motion.div>
+        )}
+
+        {step === "result" && (
+          <motion.div
+            key="result"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col gap-4"
+          >
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={selected}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35 }}
+                className="text-center text-base italic text-ink leading-relaxed px-2"
+              >
+                « {phrases[selected]} »
+              </motion.p>
+            </AnimatePresence>
+
+            <div className="flex justify-center gap-2 mt-1">
+              {phrases.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSelected(i)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === selected ? "w-6 bg-brass" : "w-1.5 bg-line"
+                  }`}
+                  aria-label={`Accroche ${i + 1}`}
+                />
+              ))}
+            </div>
+
+            <div className="flex justify-center gap-4 mt-3">
+              <button
+                type="button"
+                onClick={() => setSelected((s) => (s + 1) % phrases.length)}
+                className="smallcaps text-xs text-ink-soft hover:text-brass transition-colors"
+              >
+                ✦ suivante
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep("form")}
+                className="smallcaps text-xs text-ink-soft hover:text-brass transition-colors"
+              >
+                ↩ nouveau contexte
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
