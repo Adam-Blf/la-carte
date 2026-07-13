@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Groq from "groq-sdk";
 
-const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+function getClient() {
+  return new Groq({ apiKey: process.env.GROQ_API_KEY ?? "" });
+}
 
 export async function POST(req: NextRequest) {
   const { personne, situation, vibe } = await req.json();
@@ -27,7 +29,7 @@ Réponds UNIQUEMENT avec un tableau JSON de 5 strings, sans aucun texte autour :
 ["phrase 1", "phrase 2", "phrase 3", "phrase 4", "phrase 5"]`;
 
   try {
-    const completion = await client.chat.completions.create({
+    const completion = await getClient().chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.9,
