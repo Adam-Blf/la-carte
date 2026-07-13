@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function POST(req: NextRequest) {
   const { personne, situation, vibe } = await req.json();
@@ -27,19 +27,15 @@ Réponds UNIQUEMENT avec un tableau JSON de 5 strings, sans aucun texte autour :
 ["phrase 1", "phrase 2", "phrase 3", "phrase 4", "phrase 5"]`;
 
   try {
-    const message = await client.messages.create({
-      model: "claude-opus-4-8",
-      max_tokens: 1024,
-      thinking: { type: "adaptive" },
+    const completion = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
+      temperature: 0.9,
+      max_tokens: 1024,
     });
 
-    const textBlock = message.content.find((b) => b.type === "text");
-    if (!textBlock || textBlock.type !== "text") {
-      return NextResponse.json({ error: "Réponse invalide" }, { status: 500 });
-    }
-
-    const match = textBlock.text.match(/\[[\s\S]*\]/);
+    const text = completion.choices[0]?.message?.content ?? "";
+    const match = text.match(/\[[\s\S]*\]/);
     if (!match) {
       return NextResponse.json({ error: "Format inattendu" }, { status: 500 });
     }
