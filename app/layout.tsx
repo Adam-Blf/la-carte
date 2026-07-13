@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Fraunces, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import BackgroundMusic from "@/components/BackgroundMusic";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -53,6 +54,7 @@ export default function RootLayout({
     >
       <body className="grain min-h-full">
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        <BackgroundMusic />
         {children}
       </body>
     </html>
