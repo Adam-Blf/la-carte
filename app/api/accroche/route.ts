@@ -12,25 +12,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Contexte insuffisant" }, { status: 400 });
   }
 
-  const prompt = `Tu es un expert en séduction et en art de l'approche. Génère exactement 5 phrases d'accroche originales, élégantes et adaptées au contexte suivant.
+  const prompt = `Tu es un coach en séduction parisien, vif, cultivé, sans clichés. Tu génères des accroches qui sonnent VRAI — pas de compliments bateau, pas de formules vues partout.
 
-Personne : ${personne}
-Situation / lieu : ${situation}
-Vibe souhaitée : ${vibe || "naturelle et sincère"}
+Contexte :
+- Personne : ${personne}
+- Lieu / situation : ${situation}
+- Vibe : ${vibe || "naturelle, un peu audacieuse"}
 
-Règles :
-- Chaque phrase doit être unique dans son angle d'attaque
-- Ton français, charmant, jamais vulgaire
-- Entre 1 et 3 phrases par accroche (pas de monologues)
-- Adaptées au lieu et à la personne décrite
-- Mélange de styles : audacieux, poétique, humoristique, direct, intriguant
+Génère exactement 5 accroches. Chacune doit :
+- Partir d'un détail CONCRET lié à la personne ou au lieu (pas générique)
+- Sonner spontané, comme si ça venait de te traverser l'esprit
+- Être courte : 1 ou 2 phrases max
+- Éviter : "vous avez un sourire…", "je n'ai pas pu m'empêcher…", tout ce qui est trop vu
+- Varier les angles : observation, humour, curiosité, légèreté, audace
 
 Réponds UNIQUEMENT avec un tableau JSON de 5 strings, sans aucun texte autour :
-["phrase 1", "phrase 2", "phrase 3", "phrase 4", "phrase 5"]`;
+["accroche 1", "accroche 2", "accroche 3", "accroche 4", "accroche 5"]`;
 
   try {
     const completion = await getClient().chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "mixtral-8x7b-32768",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.9,
       max_tokens: 1024,
