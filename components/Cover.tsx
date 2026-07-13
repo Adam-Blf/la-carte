@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Tagline from "@/components/Tagline";
 
 const reveal = {
   hidden: { opacity: 0, y: 24 },
@@ -142,6 +143,16 @@ export default function Cover({
           >
             Table pour deux · service unique
           </motion.p>
+
+          <motion.div
+            variants={reveal}
+            initial="hidden"
+            animate="show"
+            custom={8}
+            className="w-full"
+          >
+            <Tagline />
+          </motion.div>
         </div>
       </div>
       </motion.div>
