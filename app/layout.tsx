@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Fraunces, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import BackgroundMusic from "@/components/BackgroundMusic";
+import PwaRegister from "@/components/PwaRegister";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -26,6 +28,12 @@ export const metadata: Metadata = {
   title: "La Carte · Maison A.",
   description:
     "Une invitation à composer le rendez-vous idéal · mise en bouche, plat, dessert, et l'addition est déjà réglée.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "La Carte",
+  },
   openGraph: {
     title: "La Carte · Maison A.",
     description:
@@ -53,6 +61,8 @@ export default function RootLayout({
     >
       <body className="grain min-h-full">
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        <BackgroundMusic />
+        <PwaRegister />
         {children}
       </body>
     </html>

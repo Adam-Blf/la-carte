@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Fond nuit encré -->
+  <rect width="512" height="512" rx="96" fill="#0a1422"/>
+  <!-- Double cadre doré -->
+  <rect x="28" y="28" width="456" height="456" rx="68" fill="none" stroke="#d4a437" stroke-width="10"/>
+  <rect x="48" y="48" width="416" height="416" rx="52" fill="none" stroke="#d4a437" stroke-width="3" opacity="0.4"/>
+  <!-- Filets horizontaux -->
+  <line x1="80" y1="148" x2="432" y2="148" stroke="#d4a437" stroke-width="1.5" opacity="0.35"/>
+  <line x1="80" y1="364" x2="432" y2="364" stroke="#d4a437" stroke-width="1.5" opacity="0.35"/>
+  <!-- Lettrine principale -->
+  <text x="256" y="310" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="300" font-size="210" fill="#f6f0e2" text-anchor="middle">A.</text>
+  <!-- Ornement bas -->
+  <text x="256" y="400" font-family="Georgia, serif" font-size="48" fill="#d4a437" text-anchor="middle" opacity="0.9">✦</text>
+  <!-- Petits points ornementaux coins intérieurs -->
+  <circle cx="80" cy="80" r="3" fill="#d4a437" opacity="0.5"/>
+  <circle cx="432" cy="80" r="3" fill="#d4a437" opacity="0.5"/>
+  <circle cx="80" cy="432" r="3" fill="#d4a437" opacity="0.5"/>
+  <circle cx="432" cy="432" r="3" fill="#d4a437" opacity="0.5"/>
+</svg>

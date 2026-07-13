@@ -14,9 +14,11 @@ const reveal = {
 export default function Cover({
   maison,
   onOpen,
+  onAccroche,
 }: {
   maison: string;
   onOpen: () => void;
+  onAccroche: () => void;
 }) {
   return (
     <motion.section
@@ -62,15 +64,26 @@ export default function Cover({
             {maison} · depuis toujours
           </motion.p>
 
-          <motion.h1
-            className="mt-6 font-display text-[clamp(3.5rem,14vw,9rem)] leading-none font-light italic"
+          <motion.div
+            className="mt-6 w-[clamp(220px,70vw,480px)]"
             variants={reveal}
             initial="hidden"
             animate="show"
             custom={1}
+            aria-label="La Carte"
           >
-            La Carte
-          </motion.h1>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100" width="100%" aria-hidden>
+              <line x1="12" y1="50" x2="48" y2="50" stroke="currentColor" strokeWidth="0.75" className="text-brass" opacity="0.5"/>
+              <circle cx="52" cy="50" r="1.5" fill="currentColor" className="text-brass" opacity="0.7"/>
+              <text x="160" y="44" fontFamily="Georgia, 'Times New Roman', serif" fontStyle="italic" fontWeight="300" fontSize="40" fill="currentColor" textAnchor="middle" letterSpacing="2" className="text-ink">La Carte</text>
+              <text x="160" y="62" fontFamily="Georgia, serif" fontSize="8.5" fill="currentColor" textAnchor="middle" letterSpacing="5" className="text-brass">MAISON A.</text>
+              <line x1="108" y1="72" x2="146" y2="72" stroke="currentColor" strokeWidth="0.5" className="text-brass" opacity="0.45"/>
+              <text x="160" y="76" fontFamily="Georgia, serif" fontSize="7" fill="currentColor" textAnchor="middle" className="text-brass">✦</text>
+              <line x1="174" y1="72" x2="212" y2="72" stroke="currentColor" strokeWidth="0.5" className="text-brass" opacity="0.45"/>
+              <circle cx="268" cy="50" r="1.5" fill="currentColor" className="text-brass" opacity="0.7"/>
+              <line x1="272" y1="50" x2="308" y2="50" stroke="currentColor" strokeWidth="0.75" className="text-brass" opacity="0.5"/>
+            </svg>
+          </motion.div>
 
           <motion.p
             className="smallcaps mt-4 text-base text-brass"
@@ -107,18 +120,30 @@ export default function Cover({
             dessert. La maison s'occupe du reste.
           </motion.p>
 
-          <motion.button
-            type="button"
-            onClick={onOpen}
-            className="smallcaps mt-12 cursor-pointer border border-brass px-10 py-4 text-base text-ink transition-colors duration-300 hover:bg-brass hover:text-paper"
+          <motion.div
+            className="mt-12 flex flex-col items-center gap-3 sm:flex-row"
             variants={reveal}
             initial="hidden"
             animate="show"
             custom={5}
-            whileTap={{ scale: 0.97 }}
           >
-            Consulter la carte
-          </motion.button>
+            <motion.button
+              type="button"
+              onClick={onOpen}
+              className="smallcaps cursor-pointer border border-brass px-8 py-4 text-base text-ink transition-colors duration-300 hover:bg-brass hover:text-paper"
+              whileTap={{ scale: 0.97 }}
+            >
+              Consulter la carte
+            </motion.button>
+            <motion.button
+              type="button"
+              onClick={onAccroche}
+              className="smallcaps cursor-pointer border border-line px-8 py-4 text-base text-ink-soft transition-colors duration-300 hover:border-brass hover:text-ink"
+              whileTap={{ scale: 0.97 }}
+            >
+              L'art de l'approche
+            </motion.button>
+          </motion.div>
 
           <motion.p
             className="mt-10 max-w-xs text-base italic text-ink-soft"
@@ -142,6 +167,7 @@ export default function Cover({
           >
             Table pour deux · service unique
           </motion.p>
+
         </div>
       </div>
       </motion.div>
