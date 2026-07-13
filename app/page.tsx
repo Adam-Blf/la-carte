@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Cover from "@/components/Cover";
+import Tagline from "@/components/Tagline";
 import Carte from "@/components/Carte";
 import Reservation, { type SlotId } from "@/components/Reservation";
 import CommandBar from "@/components/CommandBar";
@@ -20,7 +21,7 @@ const PLAT_IDS = new Set(
 );
 
 export default function Home() {
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState<"carte" | "accroche" | false>(false);
   const [selections, setSelections] = useState<Set<string>>(new Set());
   const [slots, setSlots] = useState<Set<SlotId>>(new Set());
   const [guestName, setGuestName] = useState("");
@@ -60,7 +61,7 @@ export default function Home() {
   return (
     <>
       <ThemeToggle />
-      {opened && <MusicToggle />}
+      {!!opened && <MusicToggle />}
 
       <AnimatePresence>
         {!opened && (
@@ -68,14 +69,42 @@ export default function Home() {
             key="cover"
             maison={maison}
             onOpen={() => {
-              setOpened(true);
+              setOpened("carte");
+              if (!musicPrefOff()) startMusic();
+            }}
+            onAccroche={() => {
+              setOpened("accroche");
               if (!musicPrefOff()) startMusic();
             }}
           />
         )}
       </AnimatePresence>
 
-      {opened && (
+      {opened === "accroche" && (
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="flex min-h-screen items-start justify-center px-4 pt-16 pb-24"
+        >
+          <div className="w-full max-w-md">
+            <div className="mb-8 text-center">
+              <h1 className="font-display text-4xl italic font-light">L'Art de l'Approche</h1>
+              <p className="smallcaps mt-2 text-xs text-ink-soft">par la maison</p>
+            </div>
+            <Tagline />
+            <button
+              type="button"
+              onClick={() => setOpened(false)}
+              className="smallcaps mt-10 block w-full text-center text-xs text-ink-soft/50 hover:text-ink-soft transition-colors"
+            >
+              ← retour à la couverture
+            </button>
+          </div>
+        </motion.main>
+      )}
+
+      {opened === "carte" && (
         <motion.main
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -109,7 +138,7 @@ export default function Home() {
         </motion.main>
       )}
 
-      {opened && (
+      {opened === "carte" && (
         <CommandBar
           dishCount={selections.size}
           slotCount={slots.size}

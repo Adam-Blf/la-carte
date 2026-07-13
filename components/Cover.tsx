@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Tagline from "@/components/Tagline";
 
 const reveal = {
   hidden: { opacity: 0, y: 24 },
@@ -15,9 +14,11 @@ const reveal = {
 export default function Cover({
   maison,
   onOpen,
+  onAccroche,
 }: {
   maison: string;
   onOpen: () => void;
+  onAccroche: () => void;
 }) {
   return (
     <motion.section
@@ -108,18 +109,30 @@ export default function Cover({
             dessert. La maison s'occupe du reste.
           </motion.p>
 
-          <motion.button
-            type="button"
-            onClick={onOpen}
-            className="smallcaps mt-12 cursor-pointer border border-brass px-10 py-4 text-base text-ink transition-colors duration-300 hover:bg-brass hover:text-paper"
+          <motion.div
+            className="mt-12 flex flex-col items-center gap-3 sm:flex-row"
             variants={reveal}
             initial="hidden"
             animate="show"
             custom={5}
-            whileTap={{ scale: 0.97 }}
           >
-            Consulter la carte
-          </motion.button>
+            <motion.button
+              type="button"
+              onClick={onOpen}
+              className="smallcaps cursor-pointer border border-brass px-8 py-4 text-base text-ink transition-colors duration-300 hover:bg-brass hover:text-paper"
+              whileTap={{ scale: 0.97 }}
+            >
+              Consulter la carte
+            </motion.button>
+            <motion.button
+              type="button"
+              onClick={onAccroche}
+              className="smallcaps cursor-pointer border border-line px-8 py-4 text-base text-ink-soft transition-colors duration-300 hover:border-brass hover:text-ink"
+              whileTap={{ scale: 0.97 }}
+            >
+              L'art de l'approche
+            </motion.button>
+          </motion.div>
 
           <motion.p
             className="mt-10 max-w-xs text-base italic text-ink-soft"
@@ -144,15 +157,6 @@ export default function Cover({
             Table pour deux · service unique
           </motion.p>
 
-          <motion.div
-            variants={reveal}
-            initial="hidden"
-            animate="show"
-            custom={8}
-            className="w-full"
-          >
-            <Tagline />
-          </motion.div>
         </div>
       </div>
       </motion.div>
