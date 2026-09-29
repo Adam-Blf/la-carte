@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Film motion design autonome (Chromium + ffmpeg), hors app Next.
+    "motion/**",
   ]),
 ]);
 

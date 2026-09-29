@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bacchana - On ouvre la maison</title>
+<style>
+  @font-face { font-family: 'BS'; src: url(fonts/big-shoulders-latin-900.woff2) format('woff2'); font-weight: 900; font-display: block; }
+  @font-face { font-family: 'BS'; src: url(fonts/big-shoulders-latin-700.woff2) format('woff2'); font-weight: 700; font-display: block; }
+  @font-face { font-family: 'Chivo'; src: url(fonts/chivo-latin-regular.woff2) format('woff2'); font-weight: 400; font-display: block; }
+  @font-face { font-family: 'Chivo'; src: url(fonts/chivo-latin-500.woff2) format('woff2'); font-weight: 500; font-display: block; }
+  @font-face { font-family: 'Chivo'; src: url(fonts/chivo-latin-700.woff2) format('woff2'); font-weight: 700; font-display: block; }
+  @font-face { font-family: 'Mono'; src: url(fonts/space-mono-latin-regular.woff2) format('woff2'); font-weight: 400; font-display: block; }
+  @font-face { font-family: 'Mono'; src: url(fonts/space-mono-latin-700.woff2) format('woff2'); font-weight: 700; font-display: block; }
+
+  html, body { margin: 0; height: 100%; background: #0b0510; overflow: hidden; }
+  body { display: grid; place-items: center; }
+  #viewport { position: relative; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  body.render #viewport { position: fixed; left: 0; top: 0; }
+  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: #150A20;
+           -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; font-kerning: normal; }
+  #camera { position: absolute; inset: 0; transform-origin: 960px 540px; }
+  .scene { position: absolute; inset: 0; overflow: hidden; display: none; }
+  .layer { position: absolute; inset: 0; }
+  .abs { position: absolute; }
+  .display { font-family: 'BS', Impact, sans-serif; font-weight: 900; text-transform: uppercase; line-height: .86; letter-spacing: 0; }
+  .body { font-family: 'Chivo', system-ui, sans-serif; }
+  .mono { font-family: 'Mono', ui-monospace, monospace; text-transform: uppercase; letter-spacing: .22em; }
+  .ch { display: inline-block; transform-origin: 50% 100%; }
+  .wmask { display: inline-block; overflow: hidden; vertical-align: top; }
+  .w { display: inline-block; }
+  .center { display: flex; align-items: center; justify-content: center; }
+  canvas { display: block; }
+  svg { overflow: visible; }
+
+  /* Lecteur (hors rendu) */
+  #hud { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 16px; display: flex; gap: 12px; align-items: center;
+         font: 12px/1.2 ui-monospace, monospace; color: #FFF9F0; background: rgba(21,10,32,.86); }
+  #hud input { flex: 1; accent-color: #FFD029; }
+  #hud button { font: inherit; background: #FFD029; color: #2A1140; border: 2px solid #2A1140; padding: 4px 10px; cursor: pointer; }
+  body.render #hud { display: none; }
+</style>
+</head>
+<body>
+  <div id="viewport"><div id="stage"><div id="camera"></div></div></div>
+  <div id="hud">
+    <button id="play" type="button">Lecture</button>
+    <input id="scrub" type="range" min="0" max="56" step="0.001" value="0" aria-label="Position">
+    <span id="tc">00:00.00</span>
+  </div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
