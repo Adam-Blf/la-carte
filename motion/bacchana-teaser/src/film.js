@@ -44,7 +44,9 @@ export function renderAt(t) {
     if (on) s.update(t - s.start, t);
   }
   const sh = shakeAt(t);
-  T(camera, { x: sh.x, y: sh.y, r: sh.r });
+  // Léger zoom compensatoire : la secousse ne découvre jamais les bords.
+  const over = Math.abs(sh.x) + Math.abs(sh.y) > 0.05 ? 1 + (2 * Math.max(Math.abs(sh.x), Math.abs(sh.y) * 1.78) + 4) / 1920 + Math.abs(sh.r) * 0.035 : 1;
+  T(camera, { x: sh.x, y: sh.y, r: sh.r, s: over });
   let a = 0, col = '#FFF9F0';
   for (const f of FLASHES) {
     const age = t - f.t;

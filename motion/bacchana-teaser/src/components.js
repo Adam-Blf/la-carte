@@ -353,7 +353,7 @@ export function brutalButton(parent, o) {
     style: {
       left: '0px', top: '0px', width: `${o.w}px`, height: `${o.h}px`, boxSizing: 'border-box',
       background: o.bg || C.yellow, border: `${o.border || 8}px solid ${o.ink || C.ink}`, borderRadius: `${o.radius || 0}px`,
-      color: o.ink || C.ink, fontSize: `${o.size || 120}px`, lineHeight: 1, paddingTop: `${(o.size || 120) * 0.06}px`,
+      color: o.ink || C.ink, fontSize: `${o.size || 120}px`, lineHeight: 1, paddingTop: `${(o.size || 120) * 0.08}px`, whiteSpace: 'nowrap',
     },
   });
   face.textContent = o.text || '';

@@ -1,0 +1,12 @@
+{
+  "name": "bacchana-teaser",
+  "private": true,
+  "type": "module",
+  "description": "Film motion design Bacchana, rendu image par image dans Chromium",
+  "scripts": {
+    "preview": "node tools/serve.mjs 8080",
+    "cues": "node tools/export-cues.mjs",
+    "audio": "node tools/export-cues.mjs && python3 audio/synth.py",
+    "render": "node tools/render.mjs"
+  }
+}
