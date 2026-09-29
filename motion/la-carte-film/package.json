@@ -1,0 +1,13 @@
+{
+  "name": "la-carte-film",
+  "private": true,
+  "type": "module",
+  "description": "Film motion design La Carte, rendu image par image dans Chromium",
+  "scripts": {
+    "preview": "node tools/serve.mjs 8082",
+    "cues": "node tools/export-cues.mjs",
+    "audio": "node tools/export-cues.mjs && python3 audio/synth.py",
+    "render": "node tools/render.mjs",
+    "render:vertical": "node tools/render.mjs --vertical --out out/la-carte-9x16.mp4"
+  }
+}
