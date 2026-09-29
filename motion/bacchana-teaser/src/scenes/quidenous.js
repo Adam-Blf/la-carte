@@ -3,15 +3,17 @@
 import { C, E, el, frag, T, op, prog, clamp, lerp, pulse, spring, wobble, rgba } from '../engine.js';
 import { DotGrid, titleBlock, pill, circleClip } from '../components.js';
 import { CUTS } from '../timeline.js';
-import { chrome, typedLabel } from '../vignette.js';
+import { VL, chrome, typedLabel } from '../vignette.js';
+import { W, H, pick } from '../format.js';
 
 const [start, end] = CUTS.quidenous; // 38 -> 40
 const CTR = [1400, 560];
+const PP = pick([[1480, 200], [1200, 480], [1745, 480], [1480, 850]], [[540, 780], [230, 1050], [850, 1050], [540, 1360]]);
 const PEOPLE = [
-  { n: 'LÉA', x: 1480, y: 200, bg: C.yellow },
-  { n: 'HUGO', x: 1200, y: 480, bg: C.orange },
-  { n: 'INÈS', x: 1745, y: 480, bg: C.butter },
-  { n: 'MALIK', x: 1480, y: 850, bg: C.cream },
+  { n: 'LÉA', x: PP[0][0], y: PP[0][1], bg: C.yellow },
+  { n: 'HUGO', x: PP[1][0], y: PP[1][1], bg: C.orange },
+  { n: 'INÈS', x: PP[2][0], y: PP[2][1], bg: C.butter },
+  { n: 'MALIK', x: PP[3][0], y: PP[3][1], bg: C.cream },
 ];
 const SNAP = 1.0; // 39.0
 const TARGET = PEOPLE[3];
@@ -26,8 +28,8 @@ export default {
     grid = new DotGrid(root, { bg: C.purple, dot: C.cream, alpha: 0.09 });
     spot = el('div', { class: 'abs', style: { left: `${TARGET.x - 260}px`, top: `${TARGET.y - 260}px`, width: '520px', height: '520px', borderRadius: '50%', background: rgba(C.cream, 0.14) } });
     root.appendChild(spot);
-    label = typedLabel(root, { x: 126, y: 330, text: 'ON ENCHAÎNE AVEC', color: C.yellow, size: 28 });
-    title = titleBlock(root, { x: 120, y: 378, width: 820, lines: ['QUI DE NOUS'], size: 172, color: C.cream, tag: 'La tablée pointe du doigt.', tagColor: C.lilac, tagSize: 44, tagGap: 30 });
+    label = typedLabel(root, { x: VL.lx, y: VL.ly + pick(40, 0), text: 'ON ENCHAÎNE AVEC', color: C.yellow, size: 28 });
+    title = titleBlock(root, { x: VL.tx, y: VL.ty + pick(40, 0), width: VL.tw, lines: ['QUI DE NOUS'], size: pick(172, 150), color: C.cream, tag: 'La tablée pointe du doigt.', tagColor: C.lilac, tagSize: 44, tagGap: 30 });
     arrows = PEOPLE.slice(0, 3).map((p) => {
       const a = frag(`<svg class="abs" style="left:${p.x - 150}px;top:${p.y - 150}px;overflow:visible" width="300" height="300" viewBox="-150 -150 300 300">
         <g class="ar"><path d="M40 -20 H150 V-52 L220 0 L150 52 V20 H40 Z" transform="translate(8 8)" fill="${C.ink}"/>

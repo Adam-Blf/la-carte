@@ -3,11 +3,12 @@
 import { C, E, el, frag, T, op, prog, clamp, lerp, pulse, spring, wobble, mulberry32 } from '../engine.js';
 import { DotGrid, circleClip } from '../components.js';
 import { CUTS } from '../timeline.js';
-import { chrome, typedLabel } from '../vignette.js';
+import { W, H, CX, CY, VERT, pick } from '../format.js';
+import { VL, chrome, typedLabel } from '../vignette.js';
 import { WHEEL } from './roue.js';
 
 const [start, end] = CUTS.sept; // 28 -> 30
-const HG = { x: 1540, y: 548, w: 330, h: 620 };
+const HG = pick({ x: 1540, y: 548, w: 330, h: 620 }, { x: 540, y: 1225, w: 290, h: 540 });
 const OUT0 = 1.8;
 
 let grid, num, word, tag, label, ch, hg, sandTop, sandBot, stream, grains, ring, hgSvg;
@@ -21,12 +22,12 @@ export default {
     grid = new DotGrid(root, { bg: C.cream, dot: C.ink, alpha: 0.1 });
     label = typedLabel(root, { x: 126, y: 262, text: 'ON ENCHAÎNE AVEC', color: C.purple, size: 28 });
     // Chiffre + SECONDES alignés sur la ligne de base.
-    const row = el('div', { class: 'abs', style: { left: '112px', top: '318px', display: 'flex', alignItems: 'flex-end', gap: '26px' } });
+    const row = el('div', { class: 'abs', style: { left: `${pick(112, 60)}px`, top: `${pick(318, 400)}px`, display: 'flex', alignItems: 'flex-end', gap: '26px' } });
     num = el('div', { class: 'display', style: { fontSize: '470px', color: C.ink, lineHeight: '0.86', width: '250px', textAlign: 'center', transformOrigin: '50% 80%' } });
     word = el('div', { class: 'display', style: { fontSize: '168px', color: C.ink, lineHeight: '0.86', marginBottom: '0px', whiteSpace: 'nowrap' } });
     word.textContent = 'SECONDES';
     row.append(num, word);
-    tag = el('div', { class: 'abs body', style: { left: '124px', top: '740px', fontSize: '46px', fontWeight: 500, color: C.ink2 } });
+    tag = el('div', { class: 'abs body', style: { left: `${pick(124, 72)}px`, top: `${pick(740, 830)}px`, fontSize: '46px', fontWeight: 500, color: C.ink2 } });
     tag.textContent = 'Réponds avant le dernier grain.';
     root.append(row, tag);
 
@@ -84,11 +85,11 @@ export default {
       ring.style.display = 'none';
     }
     // Sortie : l'écran monte, la vignette suivante pousse par dessous.
-    T(this.root, { y: -1080 * E.inOutQuart(prog(lt, OUT0, 2.0)) });
+    T(this.root, { y: -H * E.inOutQuart(prog(lt, OUT0, 2.0)) });
 
     grid.draw(t, { pump: 0.3 * [0, 0.5, 1, 1.5].reduce((a, b) => a + pulse(lt, b, 0.01, 0.14), 0), ripples: [{ x: 300, y: 500, t0: 1.75, speed: 1800, amp: 2.2, width: 60 }] });
     ch.update(lt);
-    label.update(lt);
+    label.root.style.display = 'none'; // le chiffre géant tient lieu de titre
 
     // Compte à rebours sur les croches.
     const n = lt < 0 ? 7 : Math.max(0, 7 - Math.floor(lt / 0.25));

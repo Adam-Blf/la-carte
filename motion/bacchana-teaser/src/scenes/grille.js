@@ -4,9 +4,20 @@ import { C, E, el, T, op, prog, clamp, lerp, pulse, spring, wobble, rgba } from 
 import { DotGrid, brutalButton, touchDot } from '../components.js';
 import { CUTS } from '../timeline.js';
 import { GAMES } from '../data.js';
+import { W, H, CX, CY, VERT, pick } from '../format.js';
 
 const [start, end] = CUTS.grille; // 42 -> 44
-export const BTN = { x: 960 - 560, y: 540 - 130, w: 1120, h: 260, off: 26 };
+export const BTN = pick({ x: 960 - 560, y: 540 - 130, w: 1120, h: 260, off: 26, size: 158 }, { x: 60, y: CY - 115, w: 960, h: 230, off: 22, size: 128 });
+// Grille du menu : 5 x 3 (16:9) ou 3 x 5 (9:16).
+const COLN = pick(5, 3);
+const tw = pick(330, 300), th = pick(276, 226), gx = 22, gy = 22;
+const ROWS = Math.ceil(GAMES.length / COLN);
+const x0 = (W - (COLN * tw + (COLN - 1) * gx)) / 2, y0 = (H - (ROWS * th + (ROWS - 1) * gy)) / 2;
+export function tileRect(i) {
+  const x = x0 + (i % COLN) * (tw + gx), y = y0 + Math.floor(i / COLN) * (th + gy);
+  return { x, y, w: tw, h: th, cx: x + tw / 2, cy: y + th / 2 };
+}
+export const TOUCH = { x: BTN.x + BTN.w * 0.72, y: BTN.y + BTN.h * 0.77 };
 const COLS = [C.purple, C.butter, C.gold, C.yellow, C.amber, C.yellow, C.butter, C.amber, C.gold, C.yellow, C.butter, C.amber, C.gold, C.yellow, C.butter];
 
 let grid, tiles, dim, big, sub, btn, touch;
@@ -18,40 +29,37 @@ export default {
   pre: 0.25,
   build(root) {
     grid = new DotGrid(root, { bg: C.purple, dot: C.cream, alpha: 0.09 });
-    const tw = 330, th = 276, gx = 22, gy = 22;
-    const x0 = (1920 - (5 * tw + 4 * gx)) / 2, y0 = (1080 - (3 * th + 2 * gy)) / 2;
     tiles = GAMES.map((g, i) => {
-      const cx = x0 + (i % 5) * (tw + gx), cy = y0 + Math.floor(i / 5) * (th + gy);
+      const cx = x0 + (i % COLN) * (tw + gx), cy = y0 + Math.floor(i / COLN) * (th + gy);
       const d = el('div', { class: 'abs', style: { left: `${cx}px`, top: `${cy}px`, width: `${tw}px`, height: `${th}px`, boxSizing: 'border-box', background: COLS[i], border: `6px solid ${C.ink}`, borderRadius: '16px', boxShadow: `10px 10px 0 ${C.ink}` } });
-      const n = el('div', { class: 'abs mono', style: { left: '22px', top: '18px', fontSize: '22px', fontWeight: 700, color: i === 0 ? C.yellow : C.ink2 } });
-      n.textContent = String(i + 1).padStart(2, '0');
-      const tl = el('div', { class: 'abs display', style: { left: '22px', right: '16px', bottom: '22px', fontSize: '56px', lineHeight: '0.9', color: i === 0 ? C.cream : C.ink } });
+      const n = null; // pas de numérotation 01-15 (rendu trop « généré »)
+      const tl = el('div', { class: 'abs display', style: { left: '22px', right: '16px', bottom: '22px', fontSize: `${pick(56, 46)}px`, lineHeight: '0.9', color: i === 0 ? C.cream : C.ink } });
       tl.textContent = g.name.toUpperCase();
-      d.append(n, tl);
+      d.append(tl);
       root.appendChild(d);
       return { d, cx: cx + tw / 2, cy: cy + th / 2 };
     });
-    dim = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '1920px', height: '1080px', background: rgba(C.purple, 0.72) } });
+    dim = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px`, background: rgba(C.purple, 0.72) } });
     root.appendChild(dim);
-    big = el('div', { class: 'abs center', style: { left: '0px', top: '250px', width: '1920px', gap: '40px' } });
+    big = el('div', { class: 'abs center', style: { left: '0px', top: `${pick(250, 560)}px`, width: `${W}px`, gap: `${pick(40, 0)}px`, flexDirection: pick('row', 'column') } });
     big.innerHTML = `<div class="display" style="font-size:520px;line-height:.86;color:${C.yellow};text-shadow:22px 22px 0 ${C.ink}">15</div>
-      <div class="display" style="font-size:300px;line-height:.86;color:${C.cream};text-shadow:14px 14px 0 ${C.ink};align-self:flex-end">JEUX</div>`;
-    sub = el('div', { class: 'abs body', style: { left: '0px', top: '760px', width: '1920px', textAlign: 'center', fontSize: '54px', fontWeight: 700, color: C.cream } });
+      <div class="display" style="font-size:300px;line-height:.86;color:${C.cream};text-shadow:14px 14px 0 ${C.ink};align-self:${pick('flex-end', 'center')};margin-top:${pick(0, 30)}px">JEUX</div>`;
+    sub = el('div', { class: 'abs body', style: { left: '0px', top: `${pick(760, 1370)}px`, width: `${W}px`, textAlign: 'center', fontSize: '54px', fontWeight: 700, color: C.cream } });
     sub.textContent = 'Un seul geste lance la soirée.';
     root.append(big, sub);
-    btn = brutalButton(root, { ...BTN, text: 'LANCE LA SOIRÉE', size: 158, border: 12, bg: C.yellow, shadow: C.night });
+    btn = brutalButton(root, { ...BTN, text: 'LANCE LA SOIRÉE', size: BTN.size, border: 12, bg: C.yellow, shadow: C.night });
     touch = touchDot(root);
   },
   update(lt, t) {
     grid.draw(t, { pump: 0.3 * pulse(lt, 0, 0.01, 0.2) });
     // Tuiles : arrivent en cascade depuis le centre, repli à 43.0.
     tiles.forEach((tl, i) => {
-      const dist = Math.hypot(tl.cx - 960, tl.cy - 540) / 1000;
+      const dist = Math.hypot(tl.cx - CX, tl.cy - CY) / 1000;
       const t0 = -0.22 + dist * 0.18;
       // La tuile 03 est la dernière carte de la rafale qui atterrit.
       const s = i === 2 ? (lt < 0 ? 0 : 1) : lt < t0 ? 0 : spring(lt - t0, 3, 0.45);
       const fold = E.inBack(prog(lt, 0.9 + dist * 0.12, 1.2 + dist * 0.12), 1.8);
-      T(tl.d, { s: s * (1 - fold), x: (960 - tl.cx) * fold, y: (540 - tl.cy) * fold, r: (1 - Math.min(1, s)) * 12 + fold * 90 * (i % 2 ? 1 : -1) });
+      T(tl.d, { s: s * (1 - fold), x: (CX - tl.cx) * fold, y: (CY - tl.cy) * fold, r: (1 - Math.min(1, s)) * 12 + fold * 90 * (i % 2 ? 1 : -1) });
     });
     const bIn = lt < 0 ? 0 : spring(lt, 3.2, 0.38);
     const bOut = E.inBack(prog(lt, 0.86, 1.1), 2);
@@ -65,7 +73,7 @@ export default {
     btn.root.style.transformOrigin = '50% 50%';
     // Le doigt arrive par la droite et survole.
     const k = E.inOutCubic(prog(lt, 1.35, 1.78));
-    touch.set(lerp(1900, 1210, k), lerp(1150, 610, k), { o: prog(lt, 1.35, 1.45), press: 0 });
+    touch.set(lerp(W + 80, TOUCH.x, k), lerp(H + 150, TOUCH.y, k), { o: prog(lt, 1.35, 1.45), press: 0 });
   },
   sfx: () => [
     { t: 41.76, id: 'whooshDown', g: 0.5, dur: 0.3 },

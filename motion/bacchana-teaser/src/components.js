@@ -1,7 +1,7 @@
 import { C, E, el, frag, T, op, clamp, lerp, prog, rgba, mulberry32, spring, splitChars, splitWords, tw } from './engine.js';
 
-export const W = 1920;
-export const H = 1080;
+import { W, H } from './format.js';
+export { W, H };
 
 // ------------------------------------------------------------------ trame
 // La trame de points du site (.bg-grain), agrandie pour la vidéo, avec des
@@ -18,6 +18,7 @@ export class DotGrid {
     this.alpha = o.alpha ?? 0.09;
     this.sp = o.spacing || 30;
     this.r = o.r || 2.3;
+    this.dots = o.dots ?? false;
   }
   draw(t, o = {}) {
     const c = this.ctx, sp = this.sp;
@@ -27,7 +28,8 @@ export class DotGrid {
     c.globalAlpha = 1;
     c.fillStyle = bg;
     c.fillRect(0, 0, this.w, this.h);
-    if (alpha <= 0.001) return;
+    // Aplats francs : la trame de points est retirée (rendu trop « généré »).
+    if (!this.dots || alpha <= 0.001) return;
     const base = this.r * (1 + (o.pump || 0));
     const live = ripples.filter((rp) => t >= rp.t0 && t - rp.t0 < 2.2);
     const hot = [];

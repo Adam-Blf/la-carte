@@ -4,10 +4,11 @@
 import { C, E, el, frag, T, op, prog, clamp, lerp, pulse, spring, wobble, rgba } from '../engine.js';
 import { DotGrid, titleBlock, Burst, fxCanvas, starPath } from '../components.js';
 import { CUTS } from '../timeline.js';
-import { chrome, typedLabel, flipIn } from '../vignette.js';
+import { W, H, CX, CY, VERT, pick } from '../format.js';
+import { VL, chrome, typedLabel, flipIn } from '../vignette.js';
 
 const [start, end] = CUTS.roue; // 26 -> 28
-export const WHEEL = { x: 1400, y: 566, r: 372 };
+export const WHEEL = pick({ x: 1400, y: 566, r: 372 }, { x: 540, y: 1175, r: 300 });
 const SEG = [
   { t: 'GAGE', bg: C.purple, fg: C.cream },
   { t: 'JOKER', bg: C.cream, fg: C.ink },
@@ -39,22 +40,22 @@ export default {
   pre: 0.2,
   build(root) {
     grid = new DotGrid(root, { bg: C.yellow, dot: C.ink, alpha: 0.1 });
-    label = typedLabel(root, { x: 126, y: 290, text: 'ON ENCHAÎNE AVEC', color: C.ink2, size: 28 });
-    title = titleBlock(root, { x: 120, y: 338, width: 820, lines: ['LA ROUE', 'DU DESTIN'], size: 176, color: C.ink, tag: 'Fais-la tourner, assume le sort.', tagColor: C.ink2, tagSize: 44, tagGap: 30 });
+    label = typedLabel(root, { x: VL.lx, y: VL.ly, text: 'ON ENCHAÎNE AVEC', color: C.ink2, size: 28 });
+    title = titleBlock(root, { x: VL.tx, y: VL.ty, width: VL.tw, lines: ['LA ROUE', 'DU DESTIN'], size: VL.ts, color: C.ink, tag: 'Fais-la tourner, assume le sort.', tagColor: C.ink2, tagSize: 44, tagGap: 30 });
 
     const { x, y, r } = WHEEL;
     const segPath = (i) => {
       const a0 = ((i * 45 - 22.5 - 90) * Math.PI) / 180, a1 = ((i * 45 + 22.5 - 90) * Math.PI) / 180;
       return `M0 0 L${(Math.cos(a0) * r).toFixed(2)} ${(Math.sin(a0) * r).toFixed(2)} A${r} ${r} 0 0 1 ${(Math.cos(a1) * r).toFixed(2)} ${(Math.sin(a1) * r).toFixed(2)} Z`;
     };
-    const svg = frag(`<svg class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+    const svg = frag(`<svg class="abs" style="left:0;top:0" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
       <circle cx="${x + 18}" cy="${y + 18}" r="${r + 34}" fill="${C.ink}"/>
       <circle cx="${x}" cy="${y}" r="${r + 34}" fill="${C.ink}"/>
       <g class="wheel" transform="translate(${x} ${y})">
         ${SEG.map((s, i) => `<path d="${segPath(i)}" fill="${s.bg}" stroke="${C.ink}" stroke-width="7" stroke-linejoin="round"/>`).join('')}
         ${SEG.map((s, i) => {
           const a = i * 45;
-          return `<g transform="rotate(${a}) translate(0 ${-r * 0.6}) rotate(-90)"><text class="lbl" x="0" y="0" text-anchor="middle" dominant-baseline="central" font-family="BS" font-weight="900" font-size="${s.t.length > 5 ? 70 : 84}" fill="${s.fg}">${s.t}</text></g>`;
+          return `<g transform="rotate(${a}) translate(0 ${-r * 0.6}) rotate(-90)"><text class="lbl" x="0" y="0" text-anchor="middle" dominant-baseline="central" font-family="BS" font-weight="900" font-size="${((s.t.length > 5 ? 70 : 84) * r) / 372}" fill="${s.fg}">${s.t}</text></g>`;
         }).join('')}
         ${Array.from({ length: 8 }, (_, i) => `<circle cx="${(Math.cos(((i * 45 + 22.5 - 90) * Math.PI) / 180) * (r - 6)).toFixed(2)}" cy="${(Math.sin(((i * 45 + 22.5 - 90) * Math.PI) / 180) * (r - 6)).toFixed(2)}" r="11" fill="${C.cream}" stroke="${C.ink}" stroke-width="5"/>`).join('')}
       </g>
@@ -99,8 +100,8 @@ export default {
     });
     // Arrêt sur GAGE : la case gonfle, éclats.
     const g = lt - STOP;
-    gage.setAttribute('font-size', (84 * (1 + (g > 0 ? 0.3 * Math.exp(-5 * g) * Math.cos(2 * Math.PI * 2.5 * g) + 0.12 * (1 - Math.exp(-6 * g)) : 0))).toFixed(2));
-    fx.clearRect(0, 0, 1920, 1080);
+    gage.setAttribute('font-size', ((84 * WHEEL.r) / 372 * (1 + (g > 0 ? 0.3 * Math.exp(-5 * g) * Math.cos(2 * Math.PI * 2.5 * g) + 0.12 * (1 - Math.exp(-6 * g)) : 0))).toFixed(2));
+    fx.clearRect(0, 0, W, H);
     burst.draw(fx, lt);
   },
   sfx: () => {

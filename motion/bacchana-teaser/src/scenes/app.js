@@ -6,6 +6,7 @@ import { DotGrid, titleBlock, touchDot, pill } from '../components.js';
 import { CUTS } from '../timeline.js';
 import { GAMES, PLAYERS } from '../data.js';
 import { PHONE, SCREEN, S, APPW, APPH, BCARD, bcardZoom } from '../phone.js';
+import { W, H, CX, CY, pick } from '../format.js';
 
 const [start, end] = CUTS.app; // 16 -> 24
 const PRE = 0.75; // le cadre se dessine dès 15.25
@@ -21,6 +22,8 @@ const TAP_JOUER = L(22.45);
 const ZOOM0 = L(22.55), ZOOM1 = L(23.94);
 
 const ink = C.ink, lineC = '#9A8BA6';
+// Colonne de texte : à gauche en 16:9, en haut et centrée en 9:16.
+const STEP = pick({ x: 120, y: 300, width: 600, size: 150, tagSize: 38, tagWidth: 520 }, { x: 60, y: 236, width: 960, size: 124, tagSize: 34, tagWidth: 900, align: 'center' });
 let grid, world, phone, shadow, body, outlineL, outlineR, screen, iris, appC, vTab, vHub, hubC;
 let rows, pillCount, card, help, dashed, pushBtn, tabTitle, tabSub, stickers, steps, touch, jouer, bcard;
 
@@ -139,15 +142,16 @@ export default {
   start,
   end,
   pre: PRE,
+  post: pick(0, 0.32), // 9:16 : le hub reste derrière le dépliage
   build(root) {
     grid = new DotGrid(root, { bg: C.purple, dot: C.cream, alpha: 0.09 });
-    world = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '1920px', height: '1080px', transformOrigin: '0 0' } });
+    world = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px`, transformOrigin: '0 0' } });
     root.appendChild(world);
 
     // Colonne de gauche : deux étapes.
     steps = [
-      titleBlock(world, { x: 120, y: 300, width: 600, label: 'ÉTAPE 1', labelColor: C.yellow, lines: ['LA TABLÉE'], size: 150, color: C.cream, tag: 'Ajoute les joueurs. Rien ne quitte ton téléphone.', tagColor: C.lilac, tagSize: 38, tagWidth: 520 }),
-      titleBlock(world, { x: 120, y: 300, width: 600, label: 'ÉTAPE 2', labelColor: C.yellow, lines: ['LE MENU'], size: 150, color: C.cream, tag: '15 jeux, servis sans modération de mauvaise foi.', tagColor: C.lilac, tagSize: 38, tagWidth: 520 }),
+      titleBlock(world, { ...STEP, label: 'ÉTAPE 1', labelColor: C.yellow, lines: ['LA TABLÉE'], color: C.cream, tag: 'Ajoute les joueurs. Rien ne quitte ton téléphone.', tagColor: C.lilac }),
+      titleBlock(world, { ...STEP, label: 'ÉTAPE 2', labelColor: C.yellow, lines: ['LE MENU'], color: C.cream, tag: '15 jeux, servis sans modération de mauvaise foi.', tagColor: C.lilac }),
     ];
 
     // Le téléphone.
@@ -157,7 +161,7 @@ export default {
     const btnL = el('div', { class: 'abs', style: { left: '-9px', top: '210px', width: '9px', height: '90px', borderRadius: '4px 0 0 4px', background: C.ink } });
     const btnR = el('div', { class: 'abs', style: { left: `${PHONE.w}px`, top: '260px', width: '9px', height: '130px', borderRadius: '0 4px 4px 0', background: C.ink } });
     screen = el('div', { class: 'abs', style: { left: `${PHONE.bezel}px`, top: `${PHONE.bezel}px`, width: `${SCREEN.w}px`, height: `${SCREEN.h}px`, borderRadius: `${SCREEN.r}px`, overflow: 'hidden', background: C.cream } });
-    appC = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${APPW}px`, height: `${APPH}px`, transformOrigin: '0 0', transform: `scale(${S})`, background: `radial-gradient(${rgba(C.ink, 0.07)} 1px, transparent 1px) 0 0 / 8px 8px, ${C.cream}` } });
+    appC = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${APPW}px`, height: `${APPH}px`, transformOrigin: '0 0', transform: `scale(${S})`, background: C.cream } });
     appC.append(buildTablee(), buildHub());
     const island = el('div', { class: 'abs', style: { left: `${APPW / 2 - 58}px`, top: '12px', width: '116px', height: '32px', borderRadius: '999px', background: C.night } });
     const time = el('div', { class: 'abs body', style: { left: '38px', top: '16px', fontSize: '15px', fontWeight: 700, color: ink } });
@@ -178,14 +182,19 @@ export default {
     world.appendChild(phone);
 
     // Stickers des prénoms autour du téléphone.
-    const spots = [
+    const spots = pick([
       { x: 1440, y: 250, r: -7, bg: C.yellow },
       { x: 1640, y: 440, r: 6, bg: C.orange },
       { x: 1430, y: 640, r: -4, bg: C.cream },
       { x: 1650, y: 840, r: 8, bg: C.butter },
-    ];
+    ], [
+      { x: 190, y: 780, r: -8, bg: C.yellow },
+      { x: 900, y: 930, r: 7, bg: C.orange },
+      { x: 180, y: 1130, r: -5, bg: C.cream },
+      { x: 895, y: 1280, r: 8, bg: C.butter },
+    ]);
     stickers = PLAYERS.map((p, i) => {
-      const s = pill(world, { x: spots[i].x, y: spots[i].y, text: p.toUpperCase(), bg: spots[i].bg, size: 112, border: 8, off: 12, pad: '14px 46px 4px' });
+      const s = pill(world, { x: spots[i].x, y: spots[i].y, text: p.toUpperCase(), bg: spots[i].bg, size: pick(112, 84), border: 8, off: 12, pad: pick('14px 46px 4px', '10px 32px 2px') });
       s.spot = spots[i];
       return s;
     });
@@ -196,7 +205,7 @@ export default {
     const zoomP = E.inOutQuart(prog(lt, ZOOM0, ZOOM1));
     const { Z: Zf, cx: PX, cy: PY } = bcardZoom();
     const Z = Math.exp(Math.log(Zf) * zoomP);
-    const cx = lerp(PX, 960, zoomP), cy = lerp(PY, 540, zoomP);
+    const cx = lerp(PX, CX, zoomP), cy = lerp(PY, CY, zoomP);
     const tx = cx - Z * PX, ty = cy - Z * PY;
     if (lt < 0) grid.cv.style.display = 'none';
     else {

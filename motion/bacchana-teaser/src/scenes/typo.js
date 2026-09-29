@@ -5,6 +5,7 @@ import { C, E, el, T, op, prog, clamp, lerp, pulse, spring, springV, splitChars,
 import { DotGrid, makeStar, diagClip, Burst, fxCanvas } from '../components.js';
 import { CUTS } from '../timeline.js';
 import { SCREEN } from '../phone.js';
+import { W, H, CX, CY, pick } from '../format.js';
 
 const [start, end] = CUTS.typo; // 12 -> 16
 const PRE = 0.5;
@@ -31,51 +32,52 @@ export default {
     // Hauteur de capitale de Big Shoulders 900 : 0,8125 em ; avec un
     // interlignage de 0,86 le haut des capitales colle au haut de la ligne.
     lines1 = [
-      line(root, 'LES MEILLEURS', { x: 118, y: 116 - 0.18 * 180, size: 180, color: C.ink }),
-      line(root, 'DE SOIRÉE', { x: 120, y: 817 - 0.18 * 180, size: 180, color: C.ink, w: 1680, align: 'right' }),
+      line(root, 'LES MEILLEURS', { x: pick(118, 78), y: pick(116, 420) - 0.18 * pick(180, 130), size: pick(180, 130), color: C.ink }),
+      line(root, 'DE SOIRÉE', { x: pick(120, 60), y: pick(817, 990) - 0.18 * pick(180, 150), size: pick(180, 150), color: C.ink, w: pick(1680, 940), align: 'right' }),
     ];
     // JEUX : aplat pourpre, ombre pleine façon sticker (text-shadow par lettre).
-    const jw = el('div', { class: 'abs', style: { left: '104px', top: '301px' } });
+    const jw = el('div', { class: 'abs', style: { left: `${pick(104, 66)}px`, top: `${pick(301, 612)}px` } });
     jeuxSh = null;
-    jeux = el('div', { class: 'display', style: { position: 'relative', fontSize: '580px', color: C.purple, lineHeight: '0.86', whiteSpace: 'nowrap' } });
+    jeux = el('div', { class: 'display', style: { position: 'relative', fontSize: `${pick(580, 400)}px`, color: C.purple, lineHeight: '0.86', whiteSpace: 'nowrap' } });
     const jch = splitChars(jeux, 'JEUX');
     jch.forEach((c) => (c.style.transformOrigin = '50% 70%'));
     jw.append(jeux);
     root.appendChild(jw);
     jeux.chars = jch;
     jeux.wrap = jw;
-    star = el('div', { class: 'abs', style: { left: '1360px', top: '330px', width: '400px', height: '400px' } });
-    star.appendChild(makeStar(400, C.orange, C.ink, 9));
+    const ss = pick(400, 330);
+    star = el('div', { class: 'abs', style: { left: `${pick(1360, 660)}px`, top: `${pick(330, 1190)}px`, width: `${ss}px`, height: `${ss}px` } });
+    star.appendChild(makeStar(ss, C.orange, C.ink, 9));
     root.appendChild(star);
 
     // Le remplissage : deux vagues pourpres + bulles.
-    liquid = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
-    liquid.innerHTML = `<svg width="1920" height="1080" viewBox="0 0 1920 1080" style="position:absolute;left:0;top:0">
+    liquid = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px` } });
+    liquid.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="position:absolute;left:0;top:0">
       <path class="w2" fill="${C.purpleSoft}"/><path class="w1" fill="${C.purple}" stroke="${C.ink}" stroke-width="10"/></svg>`;
     wave1 = liquid.querySelector('.w1');
     wave2 = liquid.querySelector('.w2');
     root.appendChild(liquid);
     fx = fxCanvas(root);
-    burst = new Burst({ seed: 21, t0: FILL1 - 0.02, x: 960, y: 60, count: 26, angle: [Math.PI * 1.1, Math.PI * 1.9], speed: [500, 1300], size: [18, 40], shapes: ['circle', 'ring'], colors: [C.cream, C.lilac], gravity: 1600, drag: 1.4, life: [0.7, 1.2], spread: 700 });
-    bubbles = Array.from({ length: 16 }, (_, i) => ({ x: 80 + ((i * 523) % 1760), r: 12 + ((i * 7) % 5) * 7, sp: 420 + ((i * 131) % 6) * 90, ph: (i * 0.137) % 1 }));
+    burst = new Burst({ seed: 21, t0: FILL1 - 0.02, x: CX, y: 60, count: 26, angle: [Math.PI * 1.1, Math.PI * 1.9], speed: [500, 1300], size: [18, 40], shapes: ['circle', 'ring'], colors: [C.cream, C.lilac], gravity: 1600, drag: 1.4, life: [0.7, 1.2], spread: W * 0.36 });
+    bubbles = Array.from({ length: 16 }, (_, i) => ({ x: 80 + ((i * 523) % (W - 160)), r: 12 + ((i * 7) % 5) * 7, sp: 420 + ((i * 131) % 6) * 90, ph: (i * 0.137) % 1 }));
 
     // Mot à mot, façon rouleau de machine à sous, sur les croches : les mots
     // défilent dans une fenêtre, sans jamais se superposer.
-    const win = el('div', { class: 'abs', style: { left: '0px', top: '240px', width: '1920px', height: '600px', overflow: 'hidden' } });
+    const win = el('div', { class: 'abs', style: { left: '0px', top: `${CY - 300}px`, width: `${W}px`, height: '600px', overflow: 'hidden' } });
     root.appendChild(win);
     const mkWord = (w, size, color) => {
-      const d = el('div', { class: 'abs display', style: { left: '0px', top: `${300 - (0.8125 * size) / 2}px`, width: '1920px', textAlign: 'center', fontSize: `${size}px`, color, lineHeight: '0.86', whiteSpace: 'nowrap', transformOrigin: `960px ${(0.8125 * size) / 2}px` } });
+      const d = el('div', { class: 'abs display', style: { left: '0px', top: `${300 - (0.8125 * size) / 2}px`, width: `${W}px`, textAlign: 'center', fontSize: `${size}px`, color, lineHeight: '0.86', whiteSpace: 'nowrap', transformOrigin: `${CX}px ${(0.8125 * size) / 2}px` } });
       d.textContent = w;
       win.appendChild(d);
       return d;
     };
-    lines2 = ['RÉUNIS', 'DANS', 'UNE', 'SEULE'].map((w) => mkWord(w, 420, C.cream));
+    lines2 = ['RÉUNIS', 'DANS', 'UNE', 'SEULE'].map((w) => mkWord(w, pick(420, 330), C.cream));
     app = mkWord('APP', 560, C.yellow);
     app.chars = splitChars(app, 'APP');
     app.win = win;
 
 
-    edge = el('div', { class: 'abs', style: { left: '0px', top: '-200px', width: '14px', height: '1480px', background: C.ink, transformOrigin: '7px 740px' } });
+    edge = el('div', { class: 'abs', style: { left: '0px', top: '-200px', width: '14px', height: `${H + 400}px`, background: C.ink, transformOrigin: `7px ${(H + 400) / 2}px` } });
     root.appendChild(edge);
   },
   update(lt, t) {
@@ -129,26 +131,26 @@ export default {
       liquid.style.display = 'none';
     } else {
       liquid.style.display = 'block';
-      const level = lerp(1180, -120, fillP);
+      const level = lerp(H + 100, -120, fillP);
       const pts1 = [], pts2 = [];
-      for (let x = -20; x <= 1940; x += 24) {
+      for (let x = -20; x <= W + 20; x += 24) {
         const y1 = level + 38 * Math.sin(x / 150 + lt * 9) + 18 * Math.sin(x / 61 - lt * 13);
         const y2 = level - 34 + 30 * Math.sin(x / 130 - lt * 7 + 1.3);
         pts1.push(`${x},${y1.toFixed(1)}`);
         pts2.push(`${x},${y2.toFixed(1)}`);
       }
-      wave1.setAttribute('d', `M-20,1200 L${pts1.join(' L')} L1940,1200 Z`);
-      wave2.setAttribute('d', `M-20,1200 L${pts2.join(' L')} L1940,1200 Z`);
+      wave1.setAttribute('d', `M-20,${H + 120} L${pts1.join(' L')} L${W + 20},${H + 120} Z`);
+      wave2.setAttribute('d', `M-20,${H + 120} L${pts2.join(' L')} L${W + 20},${H + 120} Z`);
     }
-    fx.clearRect(0, 0, 1920, 1080);
+    fx.clearRect(0, 0, W, H);
     if (fillP > 0 && fillP < 1) {
-      const level = lerp(1180, -120, fillP);
+      const level = lerp(H + 100, -120, fillP);
       fx.fillStyle = C.cream;
       fx.strokeStyle = C.ink;
       fx.lineWidth = 5;
       bubbles.forEach((b) => {
         const y = level + 60 + ((b.ph * 900 + (lt - FILL0) * b.sp) % 900);
-        if (y > 1100) return;
+        if (y > H + 20) return;
         fx.beginPath();
         fx.arc(b.x + Math.sin(lt * 6 + b.ph * 9) * 10, y, b.r, 0, Math.PI * 2);
         fx.fill();
@@ -175,7 +177,7 @@ export default {
     else {
       const pin = roll(3.0);
       const shrink = E.inOutCubic(prog(a, 0.28, 0.78));
-      const cy = lerp(0, SCREEN.y + SCREEN.h / 2 - 540, shrink);
+      const cy = lerp(0, SCREEN.y + SCREEN.h / 2 - CY, shrink);
       const punch = 1 + 0.12 * pulse(lt, 3.02, 0.01, 0.14);
       T(app, { s: punch * lerp(1, 0.34, shrink), y: cy + (1 - pin) * ROLL, o: 1 - E.inQuad(prog(a, 0.74, 0.92)) });
       app.chars.forEach((c, i) => {

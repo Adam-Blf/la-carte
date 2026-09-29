@@ -18,6 +18,20 @@ export function buildFilm(stage) {
   });
   flash = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px`, pointerEvents: 'none', zIndex: '999', opacity: '0' } });
   stage.appendChild(flash);
+  // Grain fixe très léger (3 %) : casse les paliers des dégradés du ciel
+  // une fois compressés en H.264. Identique à chaque image (pas de scintillement).
+  const g = el('canvas', { width: W, height: H, class: 'abs', style: { left: '0px', top: '0px', pointerEvents: 'none', zIndex: '998', opacity: '0.035' } });
+  const gc = g.getContext('2d');
+  const img = gc.createImageData(W, H);
+  let seed = 12345;
+  for (let i = 0; i < img.data.length; i += 4) {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    const v = seed >>> 24;
+    img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+    img.data[i + 3] = 255;
+  }
+  gc.putImageData(img, 0, 0);
+  stage.appendChild(g);
   SHAKES = SCENES.flatMap((s) => s.fx?.shakes || []);
   FLASHES = SCENES.flatMap((s) => s.fx?.flashes || []);
 }

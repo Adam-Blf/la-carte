@@ -4,22 +4,32 @@ import { C, E, el, T, op, prog, clamp, lerp, pulse, spring, wobble } from '../en
 import { DotGrid, stamp } from '../components.js';
 import { CUTS } from '../timeline.js';
 import { chrome } from '../vignette.js';
+import { W, H, CX, VERT, pick } from '../format.js';
 
 const [start, end] = CUTS.prefere; // 32 -> 34
 const PRE = 0.25;
-const TOPX = 1110, BOTX = 810; // ligne de partage
+const TOPX = 1110, BOTX = 810; // ligne de partage (16:9 : quasi verticale)
+const LY = 1010, RY = 930; // ligne de partage (9:16 : quasi horizontale)
+// Mise en page : moitié A (pourpre), moitié B (orange).
+const LAY = pick(
+  { optA: [480, 410], optB: [1440, 410], optW: 800, optS: 128, pctA: [480, 268], pctB: [1440, 268], ou: [960, 560], pen: [1440, 520], banner: [560, 66, 800, 170, 146], tag: [560, 930, 800], voteY: [720, 720] },
+  { optA: [540, 500], optB: [540, 1090], optW: 1000, optS: 112, pctA: [540, 400], pctB: [360, 1320], ou: [540, 970], pen: [540, 1190], banner: [150, 240, 780, 150, 128], tag: [90, 1470, 900], voteY: [715, 1300] },
+);
 const VOTES = [
-  { n: 'L', bg: C.yellow, side: 0, x: 330, t: 0.62 },
-  { n: 'H', bg: C.orange, side: 0, x: 490, t: 0.74 },
-  { n: 'I', bg: C.butter, side: 0, x: 650, t: 0.86 },
-  { n: 'M', bg: C.cream, side: 1, x: 1400, t: 1.0 },
+  { n: 'L', bg: C.yellow, side: 0, x: pick(330, 350), t: 0.62 },
+  { n: 'H', bg: C.orange, side: 0, x: pick(490, 540), t: 0.74 },
+  { n: 'I', bg: C.butter, side: 0, x: pick(650, 730), t: 0.86 },
+  { n: 'M', bg: C.cream, side: 1, x: pick(1400, 860), t: 1.0 },
 ];
 
 let A, B, gA, gB, ou, banner, tag, votes, pctA, pctB, pen, ch, seam;
 
 function half(root, side) {
-  const h = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
-  h.style.clipPath = side === 0
+  const h = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px` } });
+  if (VERT) h.style.clipPath = side === 0
+    ? `polygon(-60px -60px, ${W + 60}px -60px, ${W + 60}px ${RY + 16}px, -60px ${LY + 16}px)`
+    : `polygon(-60px ${LY - 16}px, ${W + 60}px ${RY - 16}px, ${W + 60}px ${H + 60}px, -60px ${H + 60}px)`;
+  else h.style.clipPath = side === 0
     ? `polygon(-60px -60px, ${TOPX + 16}px -60px, ${BOTX - 16}px 1140px, -60px 1140px)`
     : `polygon(${TOPX + 16}px -60px, 1980px -60px, 1980px 1140px, ${BOTX - 16}px 1140px)`;
   root.appendChild(h);
@@ -36,32 +46,35 @@ export default {
     B = half(root, 1);
     gA = new DotGrid(A, { bg: C.purple, dot: C.cream, alpha: 0.09 });
     gB = new DotGrid(B, { bg: C.orange, dot: C.ink, alpha: 0.12 });
-    const opt = (parent, lines, color, cx) => {
-      const d = el('div', { class: 'abs display', style: { left: `${cx - 400}px`, top: '410px', width: '800px', textAlign: 'center', fontSize: '128px', color, lineHeight: '0.9' } });
+    const opt = (parent, lines, color, [cx, cy]) => {
+      const d = el('div', { class: 'abs display', style: { left: `${cx - LAY.optW / 2}px`, top: `${cy}px`, width: `${LAY.optW}px`, textAlign: 'center', fontSize: `${LAY.optS}px`, color, lineHeight: '0.9' } });
       d.innerHTML = lines.join('<br>');
       parent.appendChild(d);
       return d;
     };
-    A.opt = opt(A, ['TOUT DIRE', 'EN RIMES'], C.cream, 480);
-    B.opt = opt(B, ['TOUT DIRE', 'EN CHANTANT'], C.ink, 1440);
-    pctA = el('div', { class: 'abs display', style: { left: '80px', top: '268px', width: '800px', textAlign: 'center', fontSize: '100px', color: C.yellow } });
-    pctB = el('div', { class: 'abs display', style: { left: '1040px', top: '268px', width: '800px', textAlign: 'center', fontSize: '100px', color: C.ink } });
+    A.opt = opt(A, ['TOUT DIRE', 'EN RIMES'], C.cream, LAY.optA);
+    B.opt = opt(B, ['TOUT DIRE', 'EN CHANTANT'], C.ink, LAY.optB);
+    pctA = el('div', { class: 'abs display', style: { left: `${LAY.pctA[0] - 400}px`, top: `${LAY.pctA[1]}px`, width: '800px', textAlign: 'center', fontSize: '100px', color: C.yellow } });
+    pctB = el('div', { class: 'abs display', style: { left: `${LAY.pctB[0] - 400}px`, top: `${LAY.pctB[1]}px`, width: '800px', textAlign: 'center', fontSize: '100px', color: C.ink } });
     A.appendChild(pctA);
     B.appendChild(pctB);
     votes = VOTES.map((v) => {
-      const d = el('div', { class: 'abs display center', style: { left: `${v.x - 64}px`, top: '720px', width: '128px', height: '128px', boxSizing: 'border-box', borderRadius: '50%', background: v.bg, border: `8px solid ${C.ink}`, boxShadow: `9px 9px 0 ${C.ink}`, fontSize: '72px', color: C.ink, paddingTop: '8px' } });
+      const d = el('div', { class: 'abs display center', style: { left: `${v.x - 64}px`, top: `${LAY.voteY[v.side]}px`, width: '128px', height: '128px', boxSizing: 'border-box', borderRadius: '50%', background: v.bg, border: `8px solid ${C.ink}`, boxShadow: `9px 9px 0 ${C.ink}`, fontSize: '72px', color: C.ink, paddingTop: '8px' } });
       d.textContent = v.n;
       (v.side ? B : A).appendChild(d);
       return d;
     });
-    pen = stamp(B, { x: 1440, y: 520, text: 'PÉNALITÉ', color: C.ink, bg: C.cream, size: 120, border: 10, double: true });
-    seam = el('div', { class: 'abs', style: { left: `${(TOPX + BOTX) / 2 - 8}px`, top: '-100px', width: '16px', height: '1280px', background: C.ink, transform: `rotate(${(Math.atan2(TOPX - BOTX, 1080) * 180) / Math.PI}deg)` } });
+    pen = stamp(B, { x: LAY.pen[0], y: LAY.pen[1], text: 'PÉNALITÉ', color: C.ink, bg: C.cream, size: 120, border: 10, double: true });
+    seam = VERT
+      ? el('div', { class: 'abs', style: { left: '-100px', top: `${(LY + RY) / 2 - 8}px`, width: `${W + 200}px`, height: '16px', background: C.ink, transform: `rotate(${(Math.atan2(RY - LY, W) * 180) / Math.PI}deg)` } })
+      : el('div', { class: 'abs', style: { left: `${(TOPX + BOTX) / 2 - 8}px`, top: '-100px', width: '16px', height: '1280px', background: C.ink, transform: `rotate(${(Math.atan2(TOPX - BOTX, 1080) * 180) / Math.PI}deg)` } });
     root.appendChild(seam);
-    banner = el('div', { class: 'abs display center', style: { left: '560px', top: '66px', width: '800px', height: '170px', boxSizing: 'border-box', background: C.yellow, border: `9px solid ${C.ink}`, boxShadow: `14px 14px 0 ${C.ink}`, fontSize: '146px', color: C.ink, paddingTop: '14px' } });
+    const [bx, by, bw, bh, bs] = LAY.banner;
+    banner = el('div', { class: 'abs display center', style: { left: `${bx}px`, top: `${by}px`, width: `${bw}px`, height: `${bh}px`, boxSizing: 'border-box', background: C.yellow, border: `9px solid ${C.ink}`, boxShadow: `14px 14px 0 ${C.ink}`, fontSize: `${bs}px`, color: C.ink, paddingTop: '14px' } });
     banner.textContent = 'TU PRÉFÈRES';
-    ou = el('div', { class: 'abs display center', style: { left: `${960 - 95}px`, top: `${560 - 95}px`, width: '190px', height: '190px', boxSizing: 'border-box', borderRadius: '50%', background: C.cream, border: `10px solid ${C.ink}`, fontSize: '104px', color: C.ink, paddingTop: '10px' } });
+    ou = el('div', { class: 'abs display center', style: { left: `${LAY.ou[0] - 95}px`, top: `${LAY.ou[1] - 95}px`, width: '190px', height: '190px', boxSizing: 'border-box', borderRadius: '50%', background: C.cream, border: `10px solid ${C.ink}`, fontSize: '104px', color: C.ink, paddingTop: '10px' } });
     ou.textContent = 'OU';
-    tag = el('div', { class: 'abs body center', style: { left: '560px', top: '930px', width: '800px', height: '74px', background: C.cream, border: `6px solid ${C.ink}`, boxSizing: 'border-box', fontSize: '34px', fontWeight: 700, color: C.ink } });
+    tag = el('div', { class: 'abs body center', style: { left: `${LAY.tag[0]}px`, top: `${LAY.tag[1]}px`, width: `${LAY.tag[2]}px`, height: '74px', background: C.cream, border: `6px solid ${C.ink}`, boxSizing: 'border-box', fontSize: '34px', fontWeight: 700, color: C.ink } });
     tag.textContent = 'Vote, la minorité prend la pénalité.';
     root.append(banner, ou, tag);
     ch = chrome(root, { n: 5, color: C.cream });
@@ -70,8 +83,8 @@ export default {
   update(lt, t) {
     // Entrée : les deux moitiés glissent l'une vers l'autre le long de la diagonale.
     const m = E.outQuart(prog(lt, -PRE, 0.02));
-    T(A, { x: -(1 - m) * 1100, y: -(1 - m) * 260 });
-    T(B, { x: (1 - m) * 1100, y: (1 - m) * 260 });
+    T(A, VERT ? { y: -(1 - m) * 1150, x: -(1 - m) * 120 } : { x: -(1 - m) * 1100, y: -(1 - m) * 260 });
+    T(B, VERT ? { y: (1 - m) * 1150, x: (1 - m) * 120 } : { x: (1 - m) * 1100, y: (1 - m) * 260 });
     op(seam, m);
     gA.draw(t, { ripples: [{ x: 480, y: 760, t0: 0.9, speed: 1500, amp: 1.6, width: 50 }] });
     gB.draw(t, { ripples: [{ x: 1440, y: 520, t0: 1.4, speed: 1700, amp: 2, width: 55 }] });
@@ -102,7 +115,7 @@ export default {
 
     // Sortie : panoramique filé vers la gauche.
     const w = E.inQuart(prog(lt, 1.76, 2.0));
-    this.root.style.transform = w > 0 ? `translateX(${(-1920 * w).toFixed(1)}px)` : 'none';
+    this.root.style.transform = w > 0 ? `translateX(${(-W * w).toFixed(1)}px)` : 'none';
   },
   sfx: () => [
     { t: 31.75, id: 'whoosh', g: 0.55, dur: 0.3, p: -0.3 },

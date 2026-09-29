@@ -1,15 +1,20 @@
 // Habillage commun des vignettes de jeux : « JEU NUMÉRO N » en haut (comme
 // l'écran d'enchaînement de l'app) et la barre de progression des 15 jeux.
 import { C, E, el, T, op, prog, clamp, lerp, rgba, splitChars } from './engine.js';
+import { W, H, pick } from './format.js';
+
+// Gabarit des vignettes : étiquette + titre à gauche (16:9), en haut (9:16).
+export const VL = pick({ lx: 126, ly: 290, tx: 120, ty: 338, tw: 840, ts: 176 }, { lx: 92, ly: 356, tx: 86, ty: 404, tw: 920, ts: 150 });
 
 export function chrome(root, { n, color = C.cream, total = 15 }) {
-  const top = el('div', { class: 'abs mono', style: { left: '0px', top: '44px', width: '1920px', textAlign: 'center', fontSize: '24px', fontWeight: 700, color, opacity: 0.85 } });
+  const top = el('div', { class: 'abs mono', style: { left: '0px', top: `${pick(44, 250)}px`, width: `${W}px`, textAlign: 'center', fontSize: '24px', fontWeight: 700, color, opacity: 0.85 } });
   top.textContent = `JEU NUMÉRO ${n}`;
-  const bar = el('div', { class: 'abs', style: { left: `${960 - (total * 44 + (total - 1) * 8) / 2}px`, top: '1018px', display: 'flex', gap: '8px' } });
+  const sw = pick(44, 40);
+  const bar = el('div', { class: 'abs', style: { left: `${W / 2 - (total * sw + (total - 1) * 8) / 2}px`, top: `${pick(1018, 1500)}px`, display: 'flex', gap: '8px' } });
   const segs = [];
   for (let i = 0; i < total; i++) {
-    const s = el('div', { style: { width: '44px', height: '9px', position: 'relative', background: rgba(color === C.cream ? C.cream : C.ink, 0.18) } });
-    const f = el('div', { class: 'abs', style: { left: '0px', top: '0px', height: '9px', width: '44px', background: color, transformOrigin: '0 50%' } });
+    const s = el('div', { style: { width: `${sw}px`, height: '9px', position: 'relative', background: rgba(color === C.cream ? C.cream : C.ink, 0.18) } });
+    const f = el('div', { class: 'abs', style: { left: '0px', top: '0px', height: '9px', width: `${sw}px`, background: color, transformOrigin: '0 50%' } });
     s.appendChild(f);
     bar.appendChild(s);
     segs.push(f);

@@ -3,10 +3,11 @@
 import { C, E, el, T, op, prog, clamp, lerp, pulse, spring, wobble } from '../engine.js';
 import { DotGrid, titleBlock, Burst, fxCanvas } from '../components.js';
 import { CUTS } from '../timeline.js';
-import { chrome, typedLabel } from '../vignette.js';
+import { W, H, CX, CY, VERT, pick } from '../format.js';
+import { VL, chrome, typedLabel } from '../vignette.js';
 
 const [start, end] = CUTS.quitte; // 30 -> 32
-const CARD = { x: 1000, y: 214, w: 790, h: 640 };
+const CARD = pick({ x: 1000, y: 214, w: 790, h: 640 }, { x: 70, y: 820, w: 940, h: 640 });
 const PICK = 0.75;
 const MULTS = [[1.0, '×2'], [1.25, '×4'], [1.5, '×8'], [1.75, '×16']];
 
@@ -19,8 +20,8 @@ export default {
   pre: 0.2,
   build(root) {
     grid = new DotGrid(root, { bg: C.butter, dot: C.ink, alpha: 0.1 });
-    label = typedLabel(root, { x: 126, y: 290, text: 'ON ENCHAÎNE AVEC', color: C.purple, size: 28 });
-    title = titleBlock(root, { x: 120, y: 338, width: 840, lines: ['QUITTE', 'OU DOUBLE'], size: 176, color: C.ink, tag: 'Ta culture se paie au comptoir.', tagColor: C.ink2, tagSize: 44, tagGap: 30 });
+    label = typedLabel(root, { x: VL.lx, y: VL.ly, text: 'ON ENCHAÎNE AVEC', color: C.purple, size: 28 });
+    title = titleBlock(root, { x: VL.tx, y: VL.ty, width: VL.tw, lines: ['QUITTE', 'OU DOUBLE'], size: VL.ts, color: C.ink, tag: 'Ta culture se paie au comptoir.', tagColor: C.ink2, tagSize: 44, tagGap: 30 });
 
     card = el('div', { class: 'abs', style: { left: `${CARD.x}px`, top: `${CARD.y}px`, width: `${CARD.w}px`, height: `${CARD.h}px`, boxSizing: 'border-box', background: C.cream, border: `8px solid ${C.ink}`, borderRadius: '24px', boxShadow: `18px 18px 0 ${C.ink}`, transformOrigin: '50% 100%' } });
     const q = el('div', { class: 'abs mono', style: { left: '44px', top: '40px', fontSize: '24px', fontWeight: 700, color: C.purple } });
@@ -37,7 +38,7 @@ export default {
       return b;
     });
     root.appendChild(card);
-    badge = el('div', { class: 'abs center', style: { left: `${CARD.x + CARD.w - 150}px`, top: `${CARD.y - 110}px`, width: '250px', height: '250px', borderRadius: '50%', background: C.orange, border: `9px solid ${C.ink}`, boxSizing: 'border-box', boxShadow: `12px 12px 0 ${C.ink}` } });
+    badge = el('div', { class: 'abs center', style: { left: `${CARD.x + CARD.w - pick(150, 235)}px`, top: `${CARD.y - 110}px`, width: '250px', height: '250px', borderRadius: '50%', background: C.orange, border: `9px solid ${C.ink}`, boxSizing: 'border-box', boxShadow: `12px 12px 0 ${C.ink}` } });
     badgeTxt = el('div', { class: 'display', style: { fontSize: '130px', color: C.cream, lineHeight: '1', paddingTop: '12px' } });
     badge.appendChild(badgeTxt);
     root.appendChild(badge);
@@ -47,8 +48,8 @@ export default {
   },
   update(lt, t) {
     // Entrée : pousse par le bas (la vignette précédente monte).
-    T(this.root, { y: 1080 * (1 - E.inOutQuart(prog(lt, -0.2, 0))) });
-    grid.draw(t, { ripples: [{ x: 1395, y: 540, t0: 1.0, speed: 1700, amp: 2, width: 55 }] });
+    T(this.root, { y: H * (1 - E.inOutQuart(prog(lt, -0.2, 0))) });
+    grid.draw(t, { ripples: [{ x: CARD.x + CARD.w / 2, y: CARD.y + CARD.h / 2, t0: 1.0, speed: 1700, amp: 2, width: 55 }] });
     ch.update(lt);
     label.update(lt - 0.02);
     title.update(lt - 0.02);
@@ -76,7 +77,7 @@ export default {
       const first = lt - MULTS[0][0];
       T(badge, { s: spring(first, 3, 0.4) * (1 + 0.25 * Math.exp(-d * 16)), r: -12 + 8 * wobble(d, 5, 6) });
     }
-    fx.clearRect(0, 0, 1920, 1080);
+    fx.clearRect(0, 0, W, H);
     burst.draw(fx, lt);
   },
   sfx: () => [

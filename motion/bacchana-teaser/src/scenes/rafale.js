@@ -5,6 +5,8 @@ import { DotGrid } from '../components.js';
 import { CUTS } from '../timeline.js';
 import { RAFALE, game } from '../data.js';
 import { chrome } from '../vignette.js';
+import { W, H, CX, CY, VERT, pick } from '../format.js';
+import { tileRect } from './grille.js';
 
 const [start, end] = CUTS.rafale; // 40 -> 42
 const DT = 0.25;
@@ -23,13 +25,27 @@ export default {
     c.font = '900 1000px BS';
     cards = RAFALE.map((id, k) => {
       const g = game(id);
-      const card = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
+      const card = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px` } });
       const grid = new DotGrid(card, { bg: BGS[k], dot: C.ink, alpha: 0.1 });
       const name = g.name.toUpperCase();
-      const size = Math.min(430, (1720 / c.measureText(name).width) * 1000);
-      const ttl = el('div', { class: 'abs display', style: { left: '0px', top: `${540 - 0.8125 * size / 2 - 20}px`, width: '1920px', textAlign: 'center', fontSize: `${size}px`, lineHeight: '0.86', color: INKS[k], whiteSpace: 'nowrap', textShadow: `${size / 32}px ${size / 32}px 0 ${INKS[k] === C.ink ? C.cream : C.ink}` } });
-      ttl.textContent = name;
-      const tag = el('div', { class: 'abs body', style: { left: '0px', top: `${540 + 0.8125 * size / 2 + 36}px`, width: '1920px', textAlign: 'center', fontSize: '44px', fontWeight: 500, color: C.ink2 } });
+      // 9:16 : titre coupé en deux lignes équilibrées.
+      const words = name.split(' ');
+      let lines = [name];
+      if (VERT && words.length > 1) {
+        let best = null;
+        for (let i = 1; i < words.length; i++) {
+          const a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
+          const m = Math.max(c.measureText(a).width, c.measureText(b).width);
+          if (!best || m < best.m) best = { m, l: [a, b] };
+        }
+        lines = best.l;
+      }
+      const widest = Math.max(...lines.map((l) => c.measureText(l).width));
+      const size = Math.min(pick(430, 330), (pick(1720, 960) / widest) * 1000);
+      const blockH = lines.length * 0.86 * size;
+      const ttl = el('div', { class: 'abs display', style: { left: '0px', top: `${CY - blockH / 2 - 20}px`, width: `${W}px`, textAlign: 'center', fontSize: `${size}px`, lineHeight: '0.86', color: INKS[k], whiteSpace: 'nowrap', textShadow: `${size / 32}px ${size / 32}px 0 ${INKS[k] === C.ink ? C.cream : C.ink}` } });
+      ttl.innerHTML = lines.join('<br>');
+      const tag = el('div', { class: 'abs body', style: { left: `${pick(0, 90)}px`, top: `${CY + blockH / 2 + 30}px`, width: `${pick(1920, 900)}px`, textAlign: 'center', fontSize: '44px', fontWeight: 500, color: C.ink2 } });
       tag.textContent = g.tag;
       card.append(ttl, tag);
       const ch = chrome(card, { n: 9 + k, color: C.ink });
@@ -52,7 +68,8 @@ export default {
       // Dernier : se réduit pour devenir une tuile de la grille.
       if (i === cards.length - 1) {
         const sh = E.inOutCubic(prog(lt, 1.76, 2.0));
-        c.card.style.transform = sh > 0 ? `translate(0px,${(sh * (242 - 540)).toFixed(1)}px) scale(${lerp(1, 0.172, sh).toFixed(4)})` : 'none';
+        const tr = tileRect(2);
+        c.card.style.transform = sh > 0 ? `translate(${(sh * (tr.cx - CX)).toFixed(1)}px,${(sh * (tr.cy - CY)).toFixed(1)}px) scale(${lerp(1, tr.w / W, sh).toFixed(4)})` : 'none';
         c.card.style.boxShadow = sh > 0 ? `0 0 0 ${(24 * sh / Math.max(0.2, lerp(1, 0.18, sh))).toFixed(1)}px ${C.ink}` : 'none';
       }
     });

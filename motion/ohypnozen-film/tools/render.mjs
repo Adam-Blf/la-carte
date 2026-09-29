@@ -4,7 +4,7 @@
 // --sub 4 capture 4 instants par image sur un obturateur à 180°, moyennés
 // par tmix. Puis concaténation et multiplexage avec la bande-son.
 //
-//   node tools/render.mjs [--sub 4] [--workers 4] [--from 0] [--to 56] [--out out/bacchana.mp4]
+//   node tools/render.mjs [--sub 4] [--workers 4] [--from 0] [--to 56] [--out out/ohypnozen.mp4]
 import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -22,8 +22,8 @@ const SUB = Number(arg('sub', 4));
 const SHUTTER = Number(arg('shutter', 180));
 const WORKERS = Number(arg('workers', Math.max(1, Math.min(4, os.cpus().length))));
 const FROM = Number(arg('from', 0));
-const TO = Number(arg('to', 56));
-const OUT = path.resolve(root, arg('out', 'out/bacchana.mp4'));
+const TO = Number(arg('to', 48));
+const OUT = path.resolve(root, arg('out', 'out/ohypnozen.mp4'));
 const CRF = arg('crf', '17');
 const FFMPEG = process.env.FFMPEG || findFfmpeg();
 const VERT = process.argv.includes('--vertical');

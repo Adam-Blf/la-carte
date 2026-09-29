@@ -3,6 +3,10 @@
 import { C, E, el, T, op, prog, clamp, lerp, pulse, spring, mixColor, splitChars } from '../engine.js';
 import { DotGrid, makeStar } from '../components.js';
 import { CUTS, BEAT } from '../timeline.js';
+import { W, CX, pick } from '../format.js';
+
+// Centre de l'éclat, et décalage vertical de l'ensemble en 9:16.
+const SY = pick(400, 760), DY = SY - 400;
 
 const [start, end] = CUTS.amorce;
 const TEXT = 'ON OUVRE LA MAISON';
@@ -26,12 +30,12 @@ export default {
   end,
   build(root) {
     grid = new DotGrid(root, { bg: C.night, dot: C.cream, alpha: 0.09 });
-    starWrap = el('div', { class: 'abs', style: { left: '865px', top: '305px', width: '190px', height: '190px' } });
+    starWrap = el('div', { class: 'abs', style: { left: `${CX - 95}px`, top: `${SY - 95}px`, width: '190px', height: '190px' } });
     starWrap.appendChild(makeStar(190));
-    label = el('div', { class: 'abs mono', style: { left: '0px', top: '548px', width: '1920px', textAlign: 'center', fontSize: '34px', color: C.cream, fontWeight: 400 } });
+    label = el('div', { class: 'abs mono', style: { left: '0px', top: `${548 + DY}px`, width: `${W}px`, textAlign: 'center', fontSize: '34px', color: C.cream, fontWeight: 400 } });
     chars = splitChars(label, TEXT);
-    cursor = el('div', { class: 'abs', style: { left: '0px', top: '553px', width: '22px', height: '36px', background: C.yellow } });
-    const row = el('div', { class: 'abs', style: { left: '0px', top: '640px', width: '1920px', display: 'flex', justifyContent: 'center', gap: '20px' } });
+    cursor = el('div', { class: 'abs', style: { left: '0px', top: `${553 + DY}px`, width: '22px', height: '36px', background: C.yellow } });
+    const row = el('div', { class: 'abs', style: { left: '0px', top: `${640 + DY}px`, width: `${W}px`, display: 'flex', justifyContent: 'center', gap: '20px' } });
     dots = [];
     for (let i = 0; i < 5; i++) {
       const b = el('div', { style: { width: '16px', height: '16px', borderRadius: '50%', background: C.cream } });
@@ -46,7 +50,7 @@ export default {
     grid.draw(t, {
       bg: mixColor(C.night, C.purple, lv),
       alpha: 0.09 * lv,
-      ripples: [{ x: 960, y: 400, t0: 2.84, speed: 1500, amp: 2.2, width: 55, decay: 1.3 }],
+      ripples: [{ x: CX, y: SY, t0: 2.84, speed: 1500, amp: 2.2, width: 55, decay: 1.3 }],
       pump: 0.25 * pulse(t, 3.0, 0.01, 0.2) + 0.25 * pulse(t, 3.5, 0.01, 0.2),
     });
 
@@ -60,7 +64,7 @@ export default {
     if (!chars.pos) chars.pos = chars.map((c) => c.offsetLeft + c.offsetWidth);
     const k = clamp(n, 0, chars.length);
     const cx = k > 0 ? chars.pos[k - 1] + 10 : chars.pos[0] - chars[0].offsetWidth;
-    op(cursor, t > 0.25 && (typing || blink) ? 1 - exit : 0);
+    op(cursor, 0); // pas de curseur de terminal (cliché)
     T(cursor, { x: cx, y: exit * 26 });
     T(label, { y: exit * 26, o: 1 - exit });
 
@@ -90,7 +94,7 @@ export default {
       const z = prog(t, ZOOM0, end);
       s *= lerp(1, 70, E.inExpo(z));
       r += 110 * E.inCubic(z);
-      y = 140 * E.inOutCubic(z);
+      y = pick(140, 200) * E.inOutCubic(z);
     }
     T(starWrap, { x, y, s, r, o: 1 });
   },

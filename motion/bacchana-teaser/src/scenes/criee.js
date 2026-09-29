@@ -3,17 +3,19 @@
 import { C, E, el, T, op, prog, clamp, lerp, pulse, spring, wobble } from '../engine.js';
 import { DotGrid, titleBlock, bubble } from '../components.js';
 import { CUTS } from '../timeline.js';
-import { chrome, typedLabel } from '../vignette.js';
+import { VL, chrome, typedLabel } from '../vignette.js';
+import { W, H, pick } from '../format.js';
 
 const [start, end] = CUTS.criee; // 36 -> 38
+const POS = pick([[1060, 170], [1480, 230], [1110, 590], [1500, 650]], [[90, 790], [720, 850], [130, 1130], [690, 1190]]);
 const BIDS = [
-  { txt: '3 !', name: 'LÉA', x: 1060, y: 170, w: 250, h: 170, bg: C.yellow, tail: 'bl', t: 0.25 },
-  { txt: '5 !', name: 'HUGO', x: 1480, y: 230, w: 260, h: 170, bg: C.butter, tail: 'br', t: 0.5 },
-  { txt: '8 !', name: 'INÈS', x: 1110, y: 590, w: 260, h: 170, bg: C.amber, tail: 'bl', t: 0.75 },
-  { txt: '12 !', name: 'MALIK', x: 1500, y: 650, w: 300, h: 170, bg: C.cream2, tail: 'br', t: 1.0 },
+  { txt: '3 !', name: 'LÉA', x: POS[0][0], y: POS[0][1], w: 250, h: 170, bg: C.yellow, tail: 'bl', t: 0.25 },
+  { txt: '5 !', name: 'HUGO', x: POS[1][0], y: POS[1][1], w: 260, h: 170, bg: C.butter, tail: 'br', t: 0.5 },
+  { txt: '8 !', name: 'INÈS', x: POS[2][0], y: POS[2][1], w: 260, h: 170, bg: C.amber, tail: 'bl', t: 0.75 },
+  { txt: '12 !', name: 'MALIK', x: POS[3][0], y: POS[3][1], w: 300, h: 170, bg: C.cream2, tail: 'br', t: 1.0 },
 ];
 const LIE = 1.25;
-const LIE_C = [1350, 520];
+const LIE_C = pick([1350, 520], [540, 1080]);
 
 let grid, title, label, ch, bids, lie;
 
@@ -24,8 +26,8 @@ export default {
   pre: 0.25,
   build(root) {
     grid = new DotGrid(root, { bg: C.cream, dot: C.ink, alpha: 0.1 });
-    label = typedLabel(root, { x: 126, y: 330, text: 'ON ENCHAÎNE AVEC', color: C.purple, size: 28 });
-    title = titleBlock(root, { x: 120, y: 378, width: 820, lines: ['LA CRIÉE'], size: 200, color: C.ink, tag: 'Surenchéris… ou crie « tu mens ! »', tagColor: C.ink2, tagSize: 44, tagGap: 30 });
+    label = typedLabel(root, { x: VL.lx, y: VL.ly + pick(40, 0), text: 'ON ENCHAÎNE AVEC', color: C.purple, size: 28 });
+    title = titleBlock(root, { x: VL.tx, y: VL.ty + pick(40, 0), width: VL.tw, lines: ['LA CRIÉE'], size: pick(200, 170), color: C.ink, tag: 'Surenchéris… ou crie « tu mens ! »', tagColor: C.ink2, tagSize: 44, tagGap: 30 });
     bids = BIDS.map((b) => {
       const n = bubble(root, { x: b.x, y: b.y, w: b.w, h: b.h, text: b.txt, bg: b.bg, tail: b.tail, size: 120, name: b.name });
       return n;
@@ -37,12 +39,13 @@ export default {
   update(lt, t) {
     // Entrée en persiennes : 6 bandes arrivent de la droite en cascade.
     if (lt < 0.02) {
-      const pts = [`1990px -10px`];
+      const bh = H / 6;
+      const pts = [`${W + 70}px -10px`];
       for (let k = 0; k < 6; k++) {
-        const x = 1920 * (1 - E.outCubic(prog(lt, -0.25 + k * 0.025, -0.05 + k * 0.025)));
-        pts.push(`${x.toFixed(1)}px ${k * 180 - (k ? 0 : 10)}px`, `${x.toFixed(1)}px ${(k + 1) * 180 + (k === 5 ? 10 : 0)}px`);
+        const x = W * (1 - E.outCubic(prog(lt, -0.25 + k * 0.025, -0.05 + k * 0.025)));
+        pts.push(`${x.toFixed(1)}px ${k * bh - (k ? 0 : 10)}px`, `${x.toFixed(1)}px ${(k + 1) * bh + (k === 5 ? 10 : 0)}px`);
       }
-      pts.push(`1990px 1090px`);
+      pts.push(`${W + 70}px ${H + 10}px`);
       this.root.style.clipPath = `polygon(${pts.join(',')})`;
     } else this.root.style.clipPath = 'none';
 

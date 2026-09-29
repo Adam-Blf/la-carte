@@ -4,15 +4,16 @@
 import { C, E, el, frag, T, op, prog, clamp, lerp, pulse, spring, wobble, rgba, mulberry32 } from '../engine.js';
 import { DotGrid, brutalButton, touchDot, Burst, fxCanvas, circleClip, makeStar, starPath } from '../components.js';
 import { CUTS } from '../timeline.js';
-import { BTN } from './grille.js';
+import { BTN, TOUCH } from './grille.js';
+import { W, H, CX, CY, VERT, pick } from '../format.js';
 
 const [start, end] = CUTS.soiree; // 44 -> 48
 const IMP = 3.5; // implosion à 47.5
 
 const BANDS = [
-  { a: -9, y: 250, bg: C.purple, fg: C.cream, star: C.yellow, txt: ['ZÉRO PUB', 'HORS LIGNE', '15 JEUX'], v: 260, t0: 0.34 },
-  { a: 5, y: 560, bg: C.ink, fg: C.yellow, star: C.orange, txt: ['LANCE LA SOIRÉE'], v: -330, t0: 0.42 },
-  { a: -4, y: 860, bg: C.orange, fg: C.ink, star: C.cream, txt: ['TA TABLE DÉCIDE', 'AVEC OU SANS ALCOOL'], v: 220, t0: 0.5 },
+  { a: -9, y: pick(250, 520), bg: C.purple, fg: C.cream, star: C.yellow, txt: ['ZÉRO PUB', 'HORS LIGNE', '15 JEUX'], v: 260, t0: 0.34 },
+  { a: 5, y: pick(560, 960), bg: C.ink, fg: C.yellow, star: C.orange, txt: ['LANCE LA SOIRÉE'], v: -330, t0: 0.42 },
+  { a: -4, y: pick(860, 1400), bg: C.orange, fg: C.ink, star: C.cream, txt: ['TA TABLE DÉCIDE', 'AVEC OU SANS ALCOOL'], v: 220, t0: 0.5 },
 ];
 
 let base, flood, gridP, gridY, world, btn, touch, ring, fx, bursts, bands, pops;
@@ -23,13 +24,13 @@ export default {
   end,
   build(root) {
     base = new DotGrid(root, { bg: C.purple, dot: C.cream, alpha: 0.09 });
-    world = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '1920px', height: '1080px', transformOrigin: '960px 540px' } });
+    world = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px`, transformOrigin: `${CX}px ${CY}px` } });
     root.appendChild(world);
-    flood = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
+    flood = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px` } });
     gridY = new DotGrid(flood, { bg: C.yellow, dot: C.ink, alpha: 0.1 });
     world.appendChild(flood);
     bands = BANDS.map((b) => {
-      const wrap = el('div', { class: 'abs', style: { left: '-600px', top: `${b.y - 95}px`, width: '3120px', height: '190px', transform: `rotate(${b.a}deg)` } });
+      const wrap = el('div', { class: 'abs', style: { left: `${CX - 1560}px`, top: `${b.y - 95}px`, width: '3120px', height: '190px', transform: `rotate(${b.a}deg)` } });
       const strip = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '3120px', height: '190px', boxSizing: 'border-box', background: b.bg, borderTop: `10px solid ${C.ink}`, borderBottom: `10px solid ${C.ink}`, overflow: 'hidden', boxShadow: `0 16px 0 ${rgba(C.ink, 0.9)}` } });
       const row = el('div', { class: 'abs display', style: { left: '0px', top: '26px', whiteSpace: 'nowrap', fontSize: '150px', lineHeight: '1', color: b.fg, display: 'flex', alignItems: 'center', gap: '46px' } });
       for (let i = 0; i < 14; i++) {
@@ -47,20 +48,20 @@ export default {
     // Éclats qui claquent sur les temps.
     const rnd = mulberry32(8);
     pops = [2.0, 2.5, 3.0, 2.25, 2.75, 3.25].map((t0, i) => {
-      const s = el('div', { class: 'abs', style: { left: `${[260, 1640, 980, 1500, 420, 1180][i] - 90}px`, top: `${[420, 720, 120, 360, 960, 980][i] - 90}px`, width: '180px', height: '180px' } });
+      const s = el('div', { class: 'abs', style: { left: `${pick([260, 1640, 980, 1500, 420, 1180], [150, 900, 540, 860, 200, 620])[i] - 90}px`, top: `${pick([420, 720, 120, 360, 960, 980], [760, 1180, 290, 740, 1600, 1640])[i] - 90}px`, width: '180px', height: '180px' } });
       s.appendChild(makeStar(180, [C.cream, C.yellow, C.orange][i % 3], C.ink, 10));
       world.appendChild(s);
       return { s, t0, r: rnd() * 60 - 30 };
     });
-    btn = brutalButton(root, { ...BTN, text: 'LANCE LA SOIRÉE', size: 158, border: 12, bg: C.yellow, shadow: C.night });
+    btn = brutalButton(root, { ...BTN, text: 'LANCE LA SOIRÉE', size: BTN.size, border: 12, bg: C.yellow, shadow: C.night });
     btn.root.style.transformOrigin = '50% 50%';
     ring = el('div', { class: 'abs', style: { left: '0px', top: '0px', borderRadius: '50%', border: `14px solid ${C.cream}`, boxSizing: 'border-box' } });
     root.appendChild(ring);
     touch = touchDot(root);
     fx = fxCanvas(root);
     bursts = [
-      new Burst({ seed: 101, t0: 0.02, x: 960, y: 540, count: 150, speed: [900, 2600], size: [26, 64], gravity: 1500, drag: 1.7, life: [1.2, 2.2], spread: 140 }),
-      new Burst({ seed: 202, t0: 2.0, x: 960, y: -60, count: 60, angle: [Math.PI * 0.2, Math.PI * 0.8], speed: [300, 900], size: [24, 50], gravity: 900, drag: 1.2, life: [1.4, 2.0], spread: 900 }),
+      new Burst({ seed: 101, t0: 0.02, x: CX, y: CY, count: 150, speed: [900, 2600], size: [26, 64], gravity: 1500, drag: 1.7, life: [1.2, 2.2], spread: 140 }),
+      new Burst({ seed: 202, t0: 2.0, x: CX, y: -60, count: 60, angle: [Math.PI * 0.2, Math.PI * 0.8], speed: [300, 900], size: [24, 50], gravity: 900, drag: 1.2, life: [1.4, 2.0], spread: 900 }),
     ];
   },
   update(lt, t) {
@@ -70,15 +71,15 @@ export default {
     btn.press(clamp(press));
     const gone = E.inBack(prog(lt, 0.3, 0.55), 2);
     T(btn.root, { s: (1 + 0.08 * pulse(lt, 0.1, 0.02, 0.1)) * (1 - gone) + 0.0001, o: 1 - prog(lt, 0.5, 0.55) });
-    touch.set(1210 - 20 * press, 610 - 20 * press, { o: 1 - prog(lt, 0.15, 0.3), press: clamp(press), ripple: lt > 0 && lt < 0.4 ? lt / 0.4 : -1 });
+    touch.set(TOUCH.x - 20 * press, TOUCH.y - 20 * press, { o: 1 - prog(lt, 0.15, 0.3), press: clamp(press), ripple: lt > 0 && lt < 0.4 ? lt / 0.4 : -1 });
     // Onde de choc.
     const rr = 2000 * E.outCubic(prog(lt, 0, 0.7));
-    Object.assign(ring.style, { left: `${960 - rr}px`, top: `${540 - rr}px`, width: `${2 * rr}px`, height: `${2 * rr}px`, borderWidth: `${lerp(40, 4, prog(lt, 0, 0.7))}px`, opacity: String(1 - prog(lt, 0.3, 0.7)) });
+    Object.assign(ring.style, { left: `${CX - rr}px`, top: `${CY - rr}px`, width: `${2 * rr}px`, height: `${2 * rr}px`, borderWidth: `${lerp(40, 4, prog(lt, 0, 0.7))}px`, opacity: String(1 - prog(lt, 0.3, 0.7)) });
     // Le jaune inonde depuis le bouton.
     const fr = lerp(0, 2300, E.inOutCubic(prog(lt, 0.05, 0.5)));
-    circleClip(flood, fr, 960, 540);
+    circleClip(flood, fr, CX, CY);
     const beats = [1, 1.5, 2, 2.5, 3, 3.5];
-    gridY.draw(t, { pump: 0.5 * beats.reduce((a, b) => a + pulse(lt, b, 0.01, 0.14), 0), ripples: beats.map((b) => ({ x: 960, y: 540, t0: b, speed: 1900, amp: 1.2, width: 60, decay: 2 })) });
+    gridY.draw(t, { pump: 0.5 * beats.reduce((a, b) => a + pulse(lt, b, 0.01, 0.14), 0), ripples: beats.map((b) => ({ x: CX, y: CY, t0: b, speed: 1900, amp: 1.2, width: 60, decay: 2 })) });
     // Bandeaux : entrent le long de leur axe, défilent, pompent sur les temps.
     bands.forEach((b, i) => {
       const B = BANDS[i];
@@ -93,7 +94,7 @@ export default {
       if (d < 0) return op(p.s, 0);
       T(p.s, { s: spring(d, 3.4, 0.35) * (1 - E.inBack(prog(d, 0.35, 0.5), 2)), r: p.r + d * 180, o: 1 });
     });
-    fx.clearRect(0, 0, 1920, 1080);
+    fx.clearRect(0, 0, W, H);
     bursts.forEach((b) => b.draw(fx, lt));
     // Implosion : tout est aspiré vers le centre en tournant.
     const imp = E.inBack(prog(lt, IMP, 4.0), 1.6);

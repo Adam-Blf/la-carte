@@ -3,6 +3,7 @@
 import { C, E, el, T, op, prog, clamp, lerp, pulse, spring, springV, wobble, splitChars, splitWords, rgba } from '../engine.js';
 import { DotGrid, makeLogo, Burst, fxCanvas } from '../components.js';
 import { CUTS } from '../timeline.js';
+import { W, H, CX, CY, VERT, pick } from '../format.js';
 
 const [start, end] = CUTS.tchin; // 4 -> 12
 const L = (x) => x - start; // temps absolu -> local
@@ -19,9 +20,9 @@ function cam(t) {
   // du point (256, 236) du logo.
   const pull = E.inOutQuart(prog(t, PULL0, PULL1));
   const push = lerp(2.5, 2.74, E.inOutSine(prog(t, OPEN, HIT)));
-  const k = lerp(push, 1.1, pull) * (1 + 0.015 * E.inOutSine(prog(t, PULL1, L(12))));
-  const cy = lerp(560, 318, pull);
-  return { k, cx: 960, cy };
+  const k = lerp(push, pick(1.1, 1.3), pull) * (1 + 0.015 * E.inOutSine(prog(t, PULL1, L(12))));
+  const cy = lerp(pick(560, 980), pick(318, 720), pull);
+  return { k, cx: CX, cy };
 }
 const toStage = (c, ux, uy) => [c.cx + (ux - 256) * c.k, c.cy + (uy - 236) * c.k];
 
@@ -33,7 +34,7 @@ export default {
     grid = new DotGrid(root, { bg: C.purple, dot: C.cream, alpha: 0.09 });
 
     // TCHIN épelé en fond sur les temps, en capitales détourées.
-    spell = el('div', { class: 'abs display', style: { left: '0px', top: '150px', width: '1920px', textAlign: 'center', fontSize: '780px', lineHeight: '1', color: 'transparent', WebkitTextStroke: `5px ${rgba(C.cream, 0.28)}`, letterSpacing: '0.02em' } });
+    spell = el('div', { class: 'abs display', style: { left: '0px', top: `${pick(150, 470)}px`, width: `${W}px`, textAlign: 'center', fontSize: `${pick(780, 400)}px`, lineHeight: '1', color: 'transparent', WebkitTextStroke: `5px ${rgba(C.cream, 0.28)}`, letterSpacing: '0.02em' } });
     spellChars = splitChars(spell, 'TCHIN');
     spellChars.forEach((c) => (c.style.transformOrigin = '50% 60%'));
     root.appendChild(spell);
@@ -45,30 +46,30 @@ export default {
     fx = fxCanvas(root);
 
     // Mot-symbole : chaque lettre jaillit d'un masque placé sous la ligne.
-    const mask = el('div', { class: 'abs', style: { left: '0px', top: '380px', width: '1920px', height: '452px', overflow: 'hidden' } });
-    word = el('div', { class: 'abs display', style: { left: '0px', top: '186px', width: '1920px', textAlign: 'center', fontSize: '262px', color: C.yellow, lineHeight: '1' } });
+    const mask = el('div', { class: 'abs', style: { left: '0px', top: `${pick(380, 854)}px`, width: `${W}px`, height: '452px', overflow: 'hidden' } });
+    word = el('div', { class: 'abs display', style: { left: '0px', top: '186px', width: `${W}px`, textAlign: 'center', fontSize: `${pick(262, 250)}px`, color: C.yellow, lineHeight: '1' } });
     letters = splitChars(word, 'BACCHANA');
     mask.appendChild(word);
-    const tag = el('div', { class: 'abs body', style: { left: '0px', top: '858px', width: '1920px', textAlign: 'center', fontSize: '46px', fontWeight: 500, color: C.lilac } });
+    const tag = el('div', { class: 'abs body', style: { left: `${pick(0, 100)}px`, top: `${pick(858, 1330)}px`, width: `${pick(1920, 880)}px`, textAlign: 'center', lineHeight: '1.3', fontSize: '46px', fontWeight: 500, color: C.lilac } });
     tagWords = splitWords(tag, 'Les meilleurs jeux de soirée, servis au comptoir.');
     root.append(mask, tag);
 
     // Les battants : deux portes de saloon qui s'ouvrent vers la salle.
-    doors = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: '1920px', height: '1080px', perspective: '1500px', perspectiveOrigin: '960px 540px' } });
+    doors = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px`, perspective: '1500px', perspectiveOrigin: `${CX}px ${CY}px` } });
     doorTxt = [];
     const mk = (side) => {
       const d = el('div', {
         class: 'abs',
         style: {
-          left: side === 'L' ? '0px' : '960px', top: '0px', width: '960px', height: '1080px', boxSizing: 'border-box',
+          left: side === 'L' ? '0px' : `${CX}px`, top: '0px', width: `${CX}px`, height: `${H}px`, boxSizing: 'border-box',
           background: C.yellow, border: `12px solid ${C.ink}`, transformOrigin: side === 'L' ? '0% 50%' : '100% 50%',
         },
       });
-      const panel = el('div', { class: 'abs', style: { left: '70px', top: '90px', right: '70px', bottom: '90px', border: `9px solid ${C.ink}`, borderRadius: '26px' } });
-      const txt = el('div', { class: 'abs display center', style: { left: '70px', right: '70px', top: '0px', bottom: '0px', fontSize: '210px', color: C.ink, whiteSpace: 'nowrap', paddingTop: '18px' } });
+      const panel = el('div', { class: 'abs', style: { left: `${pick(70, 44)}px`, top: '90px', right: `${pick(70, 44)}px`, bottom: '90px', border: `9px solid ${C.ink}`, borderRadius: '26px' } });
+      const txt = el('div', { class: 'abs display center', style: { left: '40px', right: '40px', top: '0px', bottom: '0px', fontSize: `${pick(210, 122)}px`, color: C.ink, whiteSpace: 'nowrap', paddingTop: '18px' } });
       txt.textContent = side === 'L' ? 'POUSSER' : 'LA PORTE';
       doorTxt.push(txt);
-      const knob = el('div', { class: 'abs', style: { top: '760px', width: '46px', height: '46px', borderRadius: '50%', background: C.orange, border: `9px solid ${C.ink}`, [side === 'L' ? 'right' : 'left']: '22px' } });
+      const knob = el('div', { class: 'abs', style: { top: `${pick(760, 1180)}px`, width: '46px', height: '46px', borderRadius: '50%', background: C.orange, border: `9px solid ${C.ink}`, [side === 'L' ? 'right' : 'left']: '22px' } });
       d.append(panel, txt, knob);
       return d;
     };
@@ -141,7 +142,7 @@ export default {
         new Burst({ seed: 9, t0: HIT, x: rx, y: ry, count: 10, angle: [Math.PI * 1.45, Math.PI * 1.9], speed: [800, 1600], size: [26, 46], shapes: ['circle'], colors: [C.cream], gravity: 2600, drag: 1.4, life: [0.6, 1.0] }),
       ];
     }
-    fx.clearRect(0, 0, 1920, 1080);
+    fx.clearRect(0, 0, W, H);
     bursts.forEach((b) => b.draw(fx, t));
 
     // --- BACCHANA : chaque lettre jaillit, s'étire en montant, s'écrase en

@@ -5,6 +5,7 @@ import { DotGrid, starPath } from '../components.js';
 import { CUTS } from '../timeline.js';
 import { SCREEN, S, BCARD, bcardZoom } from '../phone.js';
 import { chrome, typedLabel, flipOut } from '../vignette.js';
+import { W, H, CX, CY, VERT, pick } from '../format.js';
 
 const [start, end] = CUTS.borderland; // 24 -> 26
 
@@ -20,7 +21,7 @@ const CARDS = [
   { s: 'd', col: C.purple, ang: 7 },
   { s: 'c', col: C.ink, ang: 21 },
 ];
-const PIVOT = [1505, 1250], RAD = 700;
+const PIVOT = pick([1505, 1250], [540, 1860]), RAD = pick(700, 640);
 const CW = 260, CH = 364;
 
 let grid, cardC, bTitle, bTag, bPill, fan, big, label, ch;
@@ -55,7 +56,7 @@ export default {
   build(root) {
     grid = new DotGrid(root, { bg: C.purple, dot: C.cream, alpha: 0.09 });
     // « 52 » détouré en fond, qui compte.
-    big = el('div', { class: 'abs display', style: { left: '1080px', top: '120px', width: '840px', textAlign: 'center', fontSize: '860px', lineHeight: '0.86', color: 'transparent', WebkitTextStroke: `6px ${rgba(C.cream, 0.22)}` } });
+    big = el('div', { class: 'abs display', style: { left: `${pick(1080, 140)}px`, top: `${pick(120, 700)}px`, width: '840px', textAlign: 'center', fontSize: `${pick(860, 720)}px`, lineHeight: '0.86', color: 'transparent', WebkitTextStroke: `6px ${rgba(C.cream, 0.22)}` } });
     root.appendChild(big);
 
     // Réplique de la carte du hub, avec la même transformation que la fin du zoom.
@@ -68,7 +69,7 @@ export default {
     bPill.textContent = 'JOUER';
     cardC.append(bTitle, bTag, bPill);
     root.appendChild(cardC);
-    label = typedLabel(root, { x: 126, y: 286, text: 'ON ENCHAÎNE AVEC', color: C.yellow, size: 28 });
+    label = typedLabel(root, { x: pick(126, 92), y: pick(286, 356), text: 'ON ENCHAÎNE AVEC', color: C.yellow, size: 28 });
 
     fan = CARDS.map((c) => {
       const pc = playingCard(c);
@@ -78,17 +79,23 @@ export default {
     ch = chrome(root, { n: 1, color: C.cream });
   },
   update(lt, t) {
-    grid.draw(t, { pump: 0.25 * [0.5, 1.0, 1.5].reduce((a, b) => a + pulse(lt, b, 0.01, 0.16), 0), ripples: [{ x: 1505, y: 560, t0: 1.0, speed: 1700, amp: 1.6, width: 50 }] });
+    grid.draw(t, { pump: 0.25 * [0.5, 1.0, 1.5].reduce((a, b) => a + pulse(lt, b, 0.01, 0.16), 0), ripples: [{ x: PIVOT[0], y: PIVOT[1] - RAD, t0: 1.0, speed: 1700, amp: 1.6, width: 50 }] });
     ch.update(lt);
 
     // Carte du hub : départ exactement au cadrage de fin du zoom, puis le
     // titre remonte et laisse la place à l'étiquette.
     const { Z, cx: PX, cy: PY, r } = bcardZoom();
     const k = Z * S;
-    const x0 = 960 + Z * (r.x - PX), y0 = 540 + Z * (r.y - PY);
+    const x0 = CX + Z * (r.x - PX), y0 = CY + Z * (r.y - PY);
     const m = E.inOutCubic(prog(lt, 0.08, 0.5));
     // Cadrage final : haut des capitales du titre en (124, 352), échelle 0,86.
-    const k1 = k * 0.86, X1 = 124 - 26.5 * k1, Y1 = 352 - 85.5 * k1;
+    const k1 = pick(k * 0.86, 150 / 40), X1 = pick(124, 90) - 26.5 * k1, Y1 = pick(352, 420) - 85.5 * k1;
+    // 9:16 : le pourpre se déplie depuis la bande de la carte.
+    if (VERT) {
+      const band = CY - (r.h * Z) / 2;
+      const a = band * (1 - E.inOutCubic(prog(lt, 0.02, 0.3)));
+      this.root.style.clipPath = a > 0.5 ? `inset(${a.toFixed(1)}px 0px ${a.toFixed(1)}px 0px)` : 'none';
+    }
     const kk = lerp(k, k1, m);
     cardC.style.transform = `translate(${lerp(x0, X1, m).toFixed(2)}px,${lerp(y0, Y1, m).toFixed(2)}px) scale(${kk.toFixed(5)})`;
     T(bPill, { s: 1 - E.inBack(prog(lt, 0.02, 0.26), 2.2), o: 1 - prog(lt, 0.2, 0.26) });
@@ -106,7 +113,7 @@ export default {
       const fx = PIVOT[0] + RAD * Math.sin(a), fy = PIVOT[1] - RAD * Math.cos(a);
       const t0 = 0.06 + i * 0.06;
       const p = E.outCubic(prog(lt, t0, t0 + 0.42));
-      const x = lerp(2250, fx, p), y = lerp(1500, fy, p);
+      const x = lerp(W + 330, fx, p), y = lerp(H + 420, fy, p);
       const rot = lerp(70, c.ang, p) + 3 * wobble(lt - t0 - 0.42, 3, 5);
       const beat = 1 + 0.04 * pulse(lt, 1.5, 0.01, 0.15);
       T(pc.holder, { x, y, r: rot, s: beat });

@@ -1,7 +1,9 @@
 // Géométrie du téléphone, partagée par la typo (le cadre qui se dessine),
 // la démo de l'app et la vignette Borderland (le zoom qui s'enchaîne).
+import { W, H, CX, CY, VERT, pick } from './format.js';
+
 export const PHONE = {
-  x: 735, y: 86, w: 450, h: 918, r: 74, // corps
+  x: pick(735, 315), y: pick(86, 596), w: 450, h: 918, r: 74, // corps
   bezel: 18,
   off: 24, // ombre pleine
 };
@@ -34,6 +36,8 @@ export function bcardStage() {
 // Zoom final : la carte déborde légèrement du cadre (filets hors champ).
 export function bcardZoom() {
   const r = bcardStage();
-  const Z = Math.max(1936 / r.w, 1100 / r.h);
+  // 16:9 : la carte remplit le cadre. 9:16 : elle en prend toute la largeur,
+  // la vignette suivante déplie ensuite le pourpre vers le haut et le bas.
+  const Z = VERT ? (W + 16) / r.w : Math.max((W + 16) / r.w, (H + 20) / r.h);
   return { Z, cx: r.x + r.w / 2, cy: r.y + r.h / 2, r };
 }

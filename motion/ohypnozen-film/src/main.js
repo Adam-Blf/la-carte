@@ -5,7 +5,7 @@ const params = new URLSearchParams(location.search);
 const RENDER = params.has('render');
 
 async function fontsReady() {
-  const faces = ['900 100px BS', '700 100px BS', '400 40px Chivo', '500 40px Chivo', '700 40px Chivo', '400 30px Mono', '700 30px Mono'];
+  const faces = ['400 100px Spectral', '500 100px Spectral', 'italic 400 100px Spectral', 'italic 500 100px Spectral', '300 40px Mulish', '400 40px Mulish', '600 40px Mulish'];
   await Promise.all(faces.map((f) => document.fonts.load(f, 'ABCÉÈÀÇéèàç0123456789!?«»…')));
   await document.fonts.ready;
 }
