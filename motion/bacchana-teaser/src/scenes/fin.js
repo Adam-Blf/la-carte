@@ -8,10 +8,10 @@ import { W, H, CX, CY as MY, pick } from '../format.js';
 const [start, end] = CUTS.fin; // 48 -> 56
 // K : échelle du logo, CY : centre écran du logo (point 256,236 du viewBox).
 const K = pick(0.84, 1.05), CY = pick(262, 660);
-const Y = pick({ mask: 360, tag: 664, url: 758, tags: 900, legal: 986 }, { mask: 800, tag: 1100, url: 1252, tags: 1404, legal: 1462 });
+const Y = pick({ mask: 360, tag: 664, url: 758, store: 896, tags: 950, legal: 996 }, { mask: 800, tag: 1100, url: 1252, store: 1398, tags: 1456, legal: 1504 });
 const TCHIN = 4.0; // 52.0
 
-let grid, logoWrap, logo, letters, tagWords, url, urlFace, tags, tagChars, legal, fade, fx, spark;
+let grid, logoWrap, logo, letters, tagWords, url, urlFace, store, storeWords, tags, tagChars, legal, fade, fx, spark;
 
 export default {
   id: 'fin',
@@ -34,11 +34,14 @@ export default {
     urlFace = el('div', { class: 'abs mono center', style: { left: '0px', top: '0px', width: '800px', height: '104px', boxSizing: 'border-box', borderRadius: '999px', background: C.yellow, border: `8px solid ${C.ink}`, fontSize: '44px', fontWeight: 700, color: C.ink, letterSpacing: '0.06em', textTransform: 'none' } });
     urlFace.textContent = 'bacchana.beloucif.com';
     url.append(sh, urlFace);
+    // Sortie sur les stores : texte simple, pas de badges officiels.
+    store = el('div', { class: 'abs mono', style: { left: '0px', top: `${Y.store}px`, width: `${W}px`, textAlign: 'center', fontSize: `${pick(32, 30)}px`, fontWeight: 700, color: C.yellow } });
+    storeWords = splitWords(store, "BIENTÔT SUR L'APP STORE ET GOOGLE PLAY");
     tags = el('div', { class: 'abs mono', style: { left: '0px', top: `${Y.tags}px`, width: `${W}px`, textAlign: 'center', fontSize: '24px', fontWeight: 700, color: C.cream } });
     tagChars = splitChars(tags, '15 JEUX - ZÉRO PUB - HORS LIGNE');
     legal = el('div', { class: 'abs body', style: { left: `${pick(160, 90)}px`, top: `${Y.legal}px`, width: `${pick(1600, 900)}px`, textAlign: 'center', fontSize: '21px', color: rgba(C.lilac, 0.85), lineHeight: '1.4' } });
     legal.textContent = "Jeu réservé aux majeurs, jouable avec ou sans alcool. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.";
-    root.append(mask, tag, url, tags, legal);
+    root.append(mask, tag, url, store, tags, legal);
     fx = fxCanvas(root);
     spark = new Burst({ seed: 55, t0: TCHIN, x: CX, y: CY + (146 - 236) * K, count: 18, speed: [500, 1300], size: [24, 46], shapes: ['star', 'circle'], colors: [C.yellow, C.cream], gravity: 900, drag: 2.4, life: [0.6, 1.0] });
     fade = el('div', { class: 'abs', style: { left: '0px', top: '0px', width: `${W}px`, height: `${H}px`, background: C.night, opacity: '0' } });
@@ -81,8 +84,12 @@ export default {
     T(url, { s: u < 0 ? 0 : spring(u, 2.6, 0.38), r: u < 0 ? 0 : -3 * (1 - spring(u, 1.8, 0.5)) });
     url.style.transformOrigin = '50% 50%';
     T(urlFace, { x: 0, y: 0 });
-    tagChars.forEach((c, i) => op(c, lt > 2.75 + i * 0.02 ? 0.8 : 0));
-    op(legal, prog(lt, 3.5, 4.0));
+    storeWords.forEach((w, i) => {
+      const p = E.outCubic(prog(lt, 2.45 + i * 0.06, 2.85 + i * 0.06));
+      T(w, { y: (1 - p) * 36, o: p });
+    });
+    tagChars.forEach((c, i) => op(c, lt > 2.95 + i * 0.02 ? 0.8 : 0));
+    op(legal, prog(lt, 3.6, 4.1));
     fx.clearRect(0, 0, W, H);
     spark.draw(fx, lt);
     op(fade, E.inCubic(prog(lt, 7.35, 8.0)));

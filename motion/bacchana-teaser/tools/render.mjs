@@ -45,7 +45,7 @@ function findFfmpeg() {
 
 const f0 = Math.round(FROM * FPS), f1 = Math.round(TO * FPS);
 const total = f1 - f0;
-const tmp = path.join(root, 'out', VERT ? 'segments-v' : 'segments');
+const tmp = path.join(root, 'out', arg('tmp', VERT ? 'segments-v' : 'segments'));
 fs.mkdirSync(tmp, { recursive: true });
 const { server, port } = await serve(root);
 const t0 = Date.now();
