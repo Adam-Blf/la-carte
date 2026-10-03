@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ohypnozen - Le lever</title>
+<style>
+  @font-face { font-family: 'Spectral'; src: url(fonts/spectral-400.woff2) format('woff2'); font-weight: 400; font-style: normal; font-display: block; }
+  @font-face { font-family: 'Spectral'; src: url(fonts/spectral-500.woff2) format('woff2'); font-weight: 500; font-style: normal; font-display: block; }
+  @font-face { font-family: 'Spectral'; src: url(fonts/spectral-italic-400.woff2) format('woff2'); font-weight: 400; font-style: italic; font-display: block; }
+  @font-face { font-family: 'Spectral'; src: url(fonts/spectral-italic-500.woff2) format('woff2'); font-weight: 500; font-style: italic; font-display: block; }
+  @font-face { font-family: 'Mulish'; src: url(fonts/mulish-var.woff2) format('woff2'); font-weight: 200 1000; font-display: block; }
+
+  html, body { margin: 0; height: 100%; background: #0b0510; overflow: hidden; }
+  body { display: grid; place-items: center; }
+  #viewport { position: relative; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  body.render #viewport { position: fixed; left: 0; top: 0; }
+  #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: #241F33;
+           -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; font-kerning: normal; }
+  #camera { position: absolute; inset: 0; transform-origin: 960px 540px; }
+  .scene { position: absolute; inset: 0; overflow: hidden; display: none; }
+  .layer { position: absolute; inset: 0; }
+  .abs { position: absolute; }
+  .serif { font-family: 'Spectral', Georgia, serif; font-weight: 500; line-height: 1.08; }
+  .serif i, .it { font-style: italic; }
+  .sans { font-family: 'Mulish', system-ui, sans-serif; }
+  .ch { display: inline-block; transform-origin: 50% 100%; }
+  .wmask { display: inline-block; overflow: hidden; vertical-align: top; }
+  .w { display: inline-block; }
+  .center { display: flex; align-items: center; justify-content: center; }
+  canvas { display: block; }
+  svg { overflow: visible; }
+
+  /* Lecteur (hors rendu) */
+  #hud { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 16px; display: flex; gap: 12px; align-items: center;
+         font: 12px/1.2 ui-monospace, monospace; color: #FFF9F0; background: rgba(36,31,51,.86); }
+  #hud input { flex: 1; accent-color: #FF751F; }
+  #hud button { font: inherit; background: #FF751F; color: #322C45; border: 2px solid #322C45; padding: 4px 10px; cursor: pointer; }
+  body.render #hud { display: none; }
+</style>
+</head>
+<body>
+  <div id="viewport"><div id="stage"><div id="camera"></div></div></div>
+  <div id="hud">
+    <button id="play" type="button">Lecture</button>
+    <input id="scrub" type="range" min="0" max="48" step="0.001" value="0" aria-label="Position">
+    <span id="tc">00:00.00</span>
+  </div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
