@@ -55,12 +55,20 @@ npm run dev      # http://localhost:3000
 npm run build    # build de production
 ```
 
-Variables d'environnement (`.env.local`, déjà configurées sur Vercel) -
+Variables d'environnement (`.env.local`, déjà configurées sur Vercel, modèle
+dans `.env.example`) -
 
 | Variable | Rôle |
 |---|---|
-| `SUPABASE_URL` | URL du projet Supabase `la-carte` |
+| `LACARTE_SUPABASE_URL` | URL du projet Supabase `la-carte` |
 | `SUPABASE_ANON_KEY` | Clé anon (insert-only grâce aux policies RLS) |
+| `GROQ_API_KEY` | Générateur d'accroches IA (`app/api/accroche`) |
+
+En local, `next.config.ts` charge aussi le fichier de secrets central
+`~/.secrets/projets.env` s'il existe (chemin modifiable par la variable
+`CENTRAL_ENV_FILE`). Il n'écrase jamais une variable déjà définie et n'existe
+pas sur Vercel. Les noms y sont préfixés par projet pour rester uniques, d'où
+`LACARTE_SUPABASE_URL`.
 
 L'adresse de notification email vit dans `app/api/reservation/route.ts` côté
 serveur. Au premier envoi, FormSubmit expédie un email d'activation à cette

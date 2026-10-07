@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- chore(env): rename `SUPABASE_URL` to `LACARTE_SUPABASE_URL` so every key is unique across projects, and load the central secrets file `~/.secrets/projets.env` (or `CENTRAL_ENV_FILE`) from `next.config.ts` in local dev. Adds `.env.example`.
+
 ## [0.4.0] - 2026-10-07
 
 First tagged release. Latest changes:

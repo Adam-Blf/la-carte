@@ -44,3 +44,6 @@ next-env.d.ts
 
 # one-shot local scripts (credentials)
 scripts/*.local.py
+
+# EN: the example file holds key names only / FR : le fichier exemple ne porte que des noms de cles
+!.env.example
