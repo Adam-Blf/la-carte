@@ -1,0 +1,23 @@
+# Changelog
+
+All notable changes to this project are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow [SemVer](https://semver.org/).
+
+## [0.4.0] - 2026-10-07
+
+First tagged release. Latest changes:
+
+- docs: add colors to mermaid diagrams (#6)
+- chore: licence MIT (#4)
+- feat: musique de fond, PWA, générateur d'accroches IA, logo
+- docs: typography pass, no em dash or middle dot (#2)
+- docs: add mermaid architecture diagram to README (#1)
+- fix(mail): browser-like headers for FormSubmit behind WAF
+- feat(host): shareable invitation links with per-host WhatsApp delivery
+- fix(ux): always-clickable bill button with guidance, session-only music pref, log mail failures
+- chore: ignore local one-shot credential scripts
+- chore: ignore .vercel directory
+- feat(meta): monogram favicon and Open Graph image
+- feat(cover): 3D menu-opening rotation on entry
+- feat(ux): AA contrast, escape key, auto day-night theme and itemized totals
+- feat(brand): add Ratatouille touches and la-carte.beloucif.com metadata
+- feat(responsive): vertical reservation grid and compact mobile layout
