@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const CHEF_EMAIL = "adam.beloucif@efrei.net";
 const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${CHEF_EMAIL}`;
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_URL = process.env.LACARTE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 type Reservation = {
