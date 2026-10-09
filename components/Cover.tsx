@@ -116,7 +116,7 @@ export default function Cover({
             animate="show"
             custom={4}
           >
-            Une invitation à composer la soirée idéale · mise en bouche, plat,
+            Une invitation à composer la soirée idéale : mise en bouche, plat,
             dessert. La maison s'occupe du reste.
           </motion.p>
 
@@ -133,15 +133,15 @@ export default function Cover({
               className="smallcaps cursor-pointer border border-brass px-8 py-4 text-base text-ink transition-colors duration-300 hover:bg-brass hover:text-paper"
               whileTap={{ scale: 0.97 }}
             >
-              Consulter la carte
+              Composer ma soirée
             </motion.button>
             <motion.button
               type="button"
               onClick={onAccroche}
-              className="smallcaps cursor-pointer border border-line px-8 py-4 text-base text-ink-soft transition-colors duration-300 hover:border-brass hover:text-ink"
+              className="smallcaps cursor-pointer border border-edge px-8 py-4 text-base text-ink-soft transition-colors duration-300 hover:border-brass hover:text-ink"
               whileTap={{ scale: 0.97 }}
             >
-              L'art de l'approche
+              Trouver ma phrase d'accroche
             </motion.button>
           </motion.div>
 

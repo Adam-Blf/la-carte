@@ -100,7 +100,7 @@ export default function Tagline() {
               disabled={!personne.trim() || !situation.trim()}
               className="smallcaps mt-2 cursor-pointer border border-brass px-8 py-3 text-sm text-ink transition-colors duration-300 hover:bg-brass hover:text-paper disabled:opacity-40 disabled:cursor-default"
             >
-              Générer des accroches
+              Recevoir mes accroches
             </button>
           </motion.div>
         )}

@@ -55,7 +55,7 @@ export default function CommandBar({
               onClick={handleClick}
               className={`smallcaps shrink-0 cursor-pointer px-4 py-3 text-xs transition-all duration-300 sm:px-5 sm:text-sm ${
                 ready
-                  ? "bg-brass text-paper hover:bg-brass-bright"
+                  ? "bg-brass text-paper hover:bg-brass-bright hover:text-[#0a1422]"
                   : "border border-brass text-brass hover:bg-paper-deep"
               }`}
             >
