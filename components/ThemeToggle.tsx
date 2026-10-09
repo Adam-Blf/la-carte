@@ -30,7 +30,7 @@ export default function ThemeToggle() {
       aria-label={
         theme === "jour" ? "Passer en service du soir" : "Passer en service de jour"
       }
-      className="smallcaps fixed top-5 right-5 z-[60] min-h-11 cursor-pointer border border-line bg-paper/80 px-4 py-2 text-xs text-ink-soft backdrop-blur transition-colors duration-300 hover:border-brass hover:text-ink"
+      className="smallcaps fixed top-5 right-5 z-[60] min-h-11 cursor-pointer border border-edge bg-paper/80 px-4 py-2 text-xs text-ink-soft backdrop-blur transition-colors duration-300 hover:border-brass hover:text-ink"
     >
       {theme === "jour" ? "Service du soir" : "Service de jour"}
     </button>

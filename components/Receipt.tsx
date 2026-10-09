@@ -319,7 +319,7 @@ export default function Receipt({
             rel="noopener noreferrer"
             className="smallcaps border border-brass-bright bg-brass-bright px-6 py-4 text-center text-base text-[#0a1422] transition-opacity hover:opacity-90"
           >
-            Envoyer ma réservation
+            Réserver sur WhatsApp
           </a>
           <button
             type="button"

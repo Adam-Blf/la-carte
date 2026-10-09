@@ -84,7 +84,7 @@ export default function Reservation({
                         className={`flex h-12 w-full cursor-pointer items-center justify-center border transition-colors duration-300 ${
                           active
                             ? "border-brass bg-brass text-paper"
-                            : "border-line hover:border-brass"
+                            : "border-edge hover:border-brass"
                         }`}
                         initial={{ opacity: 0, scale: 0.85 }}
                         whileInView={{ opacity: 1, scale: 1 }}

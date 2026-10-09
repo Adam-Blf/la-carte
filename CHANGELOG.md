@@ -4,8 +4,12 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-09
+
 ### Changed
 
+- Buttons say what the visitor gets: "Composer ma soirée", "Trouver ma phrase d'accroche", "Obtenir mon lien d'invitation", "Recevoir mes accroches", "Réserver sur WhatsApp". Table in `docs/boutons.md`.
+- Contrast: light brass darkened (4.3:1 to 5.2:1 for text on paper), button borders at 3:1 or more (new `edge` token), readable hover on the order bar.
 - chore(env): rename `SUPABASE_URL` to `LACARTE_SUPABASE_URL` so every key is unique across projects, and load the central secrets file `~/.secrets/projets.env` (or `CENTRAL_ENV_FILE`) from `next.config.ts` in local dev. Adds `.env.example`.
 
 ## [0.4.0] - 2026-10-07

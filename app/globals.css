@@ -6,9 +6,10 @@
   --ink: #0e1d31;
   --ink-soft: #3c4a5e;
   /* Laiton encré · 4,6:1 sur papier crème pour le texte · le vif sert aux fonds */
-  --brass: #8c6c1d;
+  --brass: #7d601a;
   --brass-bright: #d4a437;
   --line: rgba(14, 29, 49, 0.28);
+  --edge: #6c7482;
   --receipt-paper: #fdfaf2;
   --receipt-ink: #1a1a18;
 }
@@ -21,6 +22,7 @@
   --brass: #d4a437;
   --brass-bright: #e6bd55;
   --line: rgba(241, 232, 212, 0.3);
+  --edge: #6f7686;
 }
 
 @theme inline {
@@ -31,6 +33,7 @@
   --color-brass: var(--brass);
   --color-brass-bright: var(--brass-bright);
   --color-line: var(--line);
+  --color-edge: var(--edge);
   --color-receipt-paper: var(--receipt-paper);
   --color-receipt-ink: var(--receipt-ink);
   --font-display: var(--font-fraunces);

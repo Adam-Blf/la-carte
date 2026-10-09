@@ -88,7 +88,7 @@ export default function InviteMaker() {
           onClick={copyLink}
           className="smallcaps mt-2 cursor-pointer border border-brass px-8 py-3.5 text-sm transition-colors duration-300 hover:bg-brass hover:text-paper"
         >
-          {copied ? "Lien copié · envoyez-le ✦" : "Copier mon lien d'invitation"}
+          {copied ? "Lien copié, envoyez-le ✦" : "Obtenir mon lien d'invitation"}
         </button>
       </div>
     </motion.section>
